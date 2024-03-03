@@ -1,5 +1,5 @@
 import db from "@/lib/db";
-import Currency from "@/models/Currency";
+import Currency from "@/models/currency";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
