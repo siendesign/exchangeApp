@@ -48,7 +48,7 @@ const CurrencyCalculator = () => {
           <div className="text-7xl grid grid-cols-12 gap-6">
             <span className="col-span-2 flex items-center font-thin">$</span>
             <div className="col-span-10">
-              <input type="number" className="w-full" placeholder="0.00" value={toAmount} step='0.01' onFocus={()=>{setFocus('to')}}  onChange={e=>setToAmount(e.currentTarget.value)}/>
+              <input type="number" className="w-full" placeholder="0.00" value={toAmount} step='0.01' onFocus={()=>{setFocus('to')}}  onChange={e=>setToAmount(+e.currentTarget.value)}/>
             </div>
           </div>
         </div>
