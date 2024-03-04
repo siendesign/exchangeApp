@@ -1,40 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import Link from "next/link";
-import { addCurrency, addCurrencyConvertionRate } from "@/lib/action";
-import {
-  getAllcurrencies,
-  getCurrencyPair,
-  fetchAllCurrencyPairs,
-} from "@/lib/data";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { CalendarDateRangePicker } from "./components/date-range-picker";
-import TeamSwitcher from "./components/team-switcher";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  fetchAllCurrencyPairs,
+  getAllcurrencies
+} from "@/lib/data";
+import { CalendarDateRangePicker } from "./components/date-range-picker";
 import { MainNav } from "./components/main-nav";
-import { UserNav } from "./components/user-nav";
 import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
+import TeamSwitcher from "./components/team-switcher";
+import { UserNav } from "./components/user-nav";
 
 const page = async () => {
   const currencies = await getAllcurrencies();
@@ -64,7 +40,7 @@ const page = async () => {
             </div>
           </div>
           <Tabs defaultValue="overview" className="space-y-4">
-            {/* <TabsList>
+            <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="analytics" disabled>
                 Analytics
@@ -75,7 +51,7 @@ const page = async () => {
               <TabsTrigger value="notifications" disabled>
                 Notifications
               </TabsTrigger>
-            </TabsList> */}
+            </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
@@ -207,129 +183,7 @@ const page = async () => {
       </div>
     </>
 
-    // <div className='p-8'>
-    //     <h1 className="text-3xl font-semibold my-4">Dashboard</h1>
-    //     <div className="flex gap-5">
-
-    //         <Sheet>
-    //             <SheetTrigger asChild>
-    //                 <Button variant="outline" className="capitalize">add Currency</Button>
-    //             </SheetTrigger>
-    //             <SheetContent>
-    //                 <SheetHeader>
-    //                 <SheetTitle>Add Currency</SheetTitle>
-    //                 <SheetDescription>
-    //                 Add new currency pairs here. Click save when you're done.
-    //                 </SheetDescription>
-    //                 </SheetHeader>
-    //                 <form action={addCurrency} className="">
-    //                     <div className="grid gap-4 py-4">
-    //                         <div className="grid grid-cols-4 items-center gap-4">
-    //                             <Label htmlFor="currencyName" className="text-right">
-    //                             Name
-    //                             </Label>
-    //                             <Input id="currencyName" name="currencyName"  className="col-span-3" placeholder="US dollars"/>
-    //                         </div>
-    //                         <div className="grid grid-cols-4 items-center gap-4">
-    //                             <Label htmlFor="abbrev" className="text-right">
-    //                             Abbreviaton
-    //                             </Label>
-    //                             <Input id="abbrev" name="abbrev" placeholder="USD" className="col-span-3" />
-    //                         </div>
-    //                         <div className="grid grid-cols-4 items-center gap-4">
-    //                             <Label htmlFor="symbol" className="text-right">
-    //                             Symbol
-    //                             </Label>
-    //                             <Input id="symbol" name="symbol"  placeholder="$" className="col-span-3" />
-    //                         </div>
-    //                     </div>
-    //                 <SheetFooter>
-    //                 <SheetClose asChild>
-    //                     <Button type="submit">Save changes</Button>
-    //                 </SheetClose>
-    //                 </SheetFooter>
-    //                 </form>
-    //             </SheetContent>
-    //         </Sheet>
-
-    //         {/* currency pair */}
-    //         <Sheet>
-    //             <SheetTrigger asChild>
-    //                 <Button variant="outline" className="capitalize">Add converstion pair</Button>
-    //             </SheetTrigger>
-    //             <SheetContent>
-    //                 <SheetHeader>
-    //                 <SheetTitle>Add converstion pair</SheetTitle>
-    //                 <SheetDescription>
-    //                 Add new currency pairs here. Click save when you're done.
-    //                 </SheetDescription>
-    //                 </SheetHeader>
-    //                 <form action={addCurrencyConvertionRate} className="">
-    //                     <div className="grid gap-4 py-4">
-    //                         <div className="grid grid-cols-4 items-center gap-4">
-    //                             <Label htmlFor="currencyName" className="text-right">
-    //                             From
-    //                             </Label>
-    //                             {/* <Input id="currencyName" name="currencyName"  className="col-span-3" placeholder="US dollars"/> */}
-    //                             <Select name="from" >
-    //                                 <SelectTrigger className="w-[180px]">
-    //                                     <SelectValue placeholder="Select a currency" />
-    //                                 </SelectTrigger>
-    //                                 <SelectContent>
-    //                                     <SelectGroup>
-    //                                     <SelectLabel>Currencies</SelectLabel>
-    //                                     {currencies.map((currency:any)=>{
-    //                                         return <SelectItem key={currency._id} value={currency.abbrev}>{currency.abbrev}</SelectItem>
-    //                                     })}
-    //                                     </SelectGroup>
-    //                                 </SelectContent>
-    //                             </Select>
-
-    //                         </div>
-    //                         <div className="grid grid-cols-4 items-center gap-4">
-    //                             <Label htmlFor="abbrev" className="text-right">
-    //                             to
-    //                             </Label>
-    //                             <Select name="to">
-    //                                 <SelectTrigger className="w-[180px]">
-    //                                     <SelectValue placeholder="Select a currency" />
-    //                                 </SelectTrigger>
-    //                                 <SelectContent>
-    //                                     <SelectGroup>
-    //                                     <SelectLabel>Currencies</SelectLabel>
-    //                                     {currencies.map((currency:any)=>{
-    //                                         return <SelectItem key={currency._id} value={currency.abbrev}>{currency.abbrev}</SelectItem>
-    //                                     })}
-    //                                     </SelectGroup>
-    //                                 </SelectContent>
-    //                             </Select>
-    //                         </div>
-    //                         <div className="grid grid-cols-4 items-center gap-4">
-    //                             <Label htmlFor="symbol" className="text-right">
-    //                             rate
-    //                             </Label>
-    //                             <Input id="symbol" name="rate"  placeholder="0.00" className="col-span-3" />
-    //                         </div>
-    //                     </div>
-    //                 <SheetFooter>
-    //                 <SheetClose asChild>
-    //                     <Button type="submit">Save changes</Button>
-    //                 </SheetClose>
-    //                 </SheetFooter>
-    //                 </form>
-    //             </SheetContent>
-    //         </Sheet>
-    //     </div>
-    //   <hr />
-    //   {currencies.map(currency => (
-    //     <div key={currency._id}>{currency.abbrev} - {currency.symbol}</div>
-    //   ))}
-    //   <hr />
-    //   {pairs.map(pair => (
-    //     <div key={pair._id}>{pair.from} - {pair.to} @ {pair.rate}</div>
-    //   ))}
-
-    // </div>
+    
   );
 };
 
