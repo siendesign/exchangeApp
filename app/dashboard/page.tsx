@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,8 +16,6 @@ import { UserNav } from "./components/user-nav";
 const page = async () => {
   const currencies = await getAllcurrencies();
   const pairs = await fetchAllCurrencyPairs();
-  console.log(currencies);
-  console.log(pairs);
 
   return (
     <>
