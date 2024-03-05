@@ -2,10 +2,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  fetchAllCurrencyPairs,
-  getAllcurrencies
-} from "@/lib/data";
+// import {
+//   fetchAllCurrencyPairs,
+//   getAllcurrencies
+// } from "@/lib/data";
 import { CalendarDateRangePicker } from "./components/date-range-picker";
 import { MainNav } from "./components/main-nav";
 import { Overview } from "./components/overview";
@@ -14,8 +14,8 @@ import TeamSwitcher from "./components/team-switcher";
 import { UserNav } from "./components/user-nav";
 
 const page = async () => {
-  const currencies = await getAllcurrencies();
-  const pairs = await fetchAllCurrencyPairs();
+  // const currencies = await getAllcurrencies();
+  // const pairs = await fetchAllCurrencyPairs();
 
   return (
     <>
