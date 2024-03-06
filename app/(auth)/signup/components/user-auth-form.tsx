@@ -52,6 +52,7 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
         description: "There was a problem with your request. Pasword fields don't match",
       });
 
+
     console.log({ email, password, confirmPassword });
 
     addnewUser(e);
@@ -125,7 +126,7 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
               <div className="">Loading...</div>
             ) : (
               //   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-              <div className="">Login</div>
+              <div className="">Sign up</div>
             )}
           </Button>
         </div>
