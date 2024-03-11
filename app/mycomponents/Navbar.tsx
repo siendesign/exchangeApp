@@ -5,7 +5,7 @@ const Navbar = () => {
     <div className="px-7 py-4 border-b">
       <div className="flex justify-between items-center ">
         <div className="">
-          <div className="relative z-20 flex items-center text-sm font-medium ">
+          <div className="relative z-20 flex items-center text-sm font-bold">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -18,13 +18,13 @@ const Navbar = () => {
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
-            Rio Exchange
+            <span className="">GuyExchange</span>
           </div>
         </div>
         <div className="">
-        <button className="w-32 h-10 rounded-xl bg-black border dark:border-white border-transparent text-white text-xs">
-          Try now
-        </button>
+          <button className="w-32 h-10 rounded-xl bg-black border dark:border-white border-transparent text-white text-xs">
+            Try now
+          </button>
         </div>
       </div>
     </div>

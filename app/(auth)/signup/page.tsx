@@ -26,7 +26,7 @@ const page = () => {
       </div> */}
       <div className="container relative  h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0">
         <Link
-          href="/examples/authentication"
+          href="/login"
           className={cn(
             buttonVariants({ variant: "ghost" }),
             "absolute right-4 top-4 md:right-8 md:top-8"

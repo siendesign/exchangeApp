@@ -1,26 +1,77 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import React from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 interface LoginAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const LoginAuthForm = ({ className, ...props }: LoginAuthFormProps) => {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault();
+  const [credntials, setCredentials] = useState({
+    email: "",
+    password: "",
+  });
+
+  // if (session) router.push("/exchange");
+
+  function handleInput(e: any) {
+    setCredentials((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  }
+
+  async function onSubmit(e: any) {
     setIsLoading(true);
 
-    setTimeout(() => {
+    const { email, password } = Object.fromEntries(e);
+
+    console.log(email, password);
+
+    if (!email || !password) {
       setIsLoading(false);
-    }, 3000);
+      return toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description:
+          "There was a problem with your request. All credentials must be provided!",
+      });
+    }
+
+    try {
+      const res = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      })
+
+      if (res?.error) {
+        setIsLoading(false);
+        return toast({
+          variant: "destructive",
+          title: "Uh oh! Invalid Credentials.",
+          description:
+            "There was a problem with your request. All credentials must be provided!",
+        });
+      }
+
+      router.push("/exchange");
+    } catch (error) {
+      console.log(error);
+    }
+    // setTimeout(() => {
+    //   setIsLoading(false);
+    // }, 3000);
   }
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={onSubmit}>
+      <form action={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
@@ -28,12 +79,14 @@ const LoginAuthForm = ({ className, ...props }: LoginAuthFormProps) => {
             </Label>
             <Input
               id="email"
+              name="email"
               placeholder="name@example.com"
               type="email"
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
               disabled={isLoading}
+              onChange={(e) => handleInput(e)}
             />
           </div>
           <div className="grid gap-1">
@@ -42,56 +95,27 @@ const LoginAuthForm = ({ className, ...props }: LoginAuthFormProps) => {
             </Label>
             <Input
               id="password"
+              name="password"
               placeholder="Password"
               type="password"
               autoCapitalize="none"
               autoComplete="password"
               autoCorrect="off"
               disabled={isLoading}
+              onChange={(e) => handleInput(e)}
             />
           </div>
-          {/* <div className="grid gap-1">
-            <Label className="sr-only" htmlFor="email">
-              Confirm Password
-            </Label>
-            <Input
-              id="confirmPassword"
-              placeholder="Confirm Password"
-              type="confirmPassword"
-              autoCapitalize="none"
-              autoComplete="confirmPassword"
-              autoCorrect="off"
-              disabled={isLoading}
-            />
-          </div> */}
-          <Button disabled={isLoading}>
-            {isLoading? (
-                <div className="">Loading...</div>
-            //   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-            ):(
-                <div className="">Login</div>
+
+          <Button disabled={isLoading} type="submit">
+            {isLoading ? (
+              <div className="">Loading...</div>
+            ) : (
+              //   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+              <div className="">Login</div>
             )}
           </Button>
         </div>
       </form>
-      {/* <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div> */}
-      {/* <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? (
-        //   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-        //   <Icons.gitHub className="mr-2 h-4 w-4" />
-        )}{" "}
-        GitHub
-      </Button> */}
     </div>
   );
 };

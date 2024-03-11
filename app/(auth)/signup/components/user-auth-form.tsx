@@ -2,17 +2,15 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
-import React, { useState } from "react";
-import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { addnewUser } from "@/lib/action";
-import { ToastAction } from "@/components/ui/toast";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string | undefined>("");
 
@@ -28,44 +26,59 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
     setInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-
-  const handleSubmit = (e: any) => {
+  const handleSignUp = async (e: any) => {
     setIsLoading(true);
-
     const { email, password, confirmPassword } = Object.fromEntries(e);
 
-    setTimeout(() => {
+    if (!email || !password || !confirmPassword) {
       setIsLoading(false);
-    }, 3000);
-
-    if (!email || !password || !confirmPassword)
       return toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
         description:
           "There was a problem with your request. All credentials must be provided!",
       });
-    if (password !== confirmPassword)
+    }
+
+    if (password !== confirmPassword) {
+      setIsLoading(false);
       return toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description: "There was a problem with your request. Pasword fields don't match",
+        description:
+          "There was a problem with your request. Pasword fields don't match",
       });
+    }
 
-
-    console.log({ email, password, confirmPassword });
-
-    addnewUser(e);
+    await fetch("api/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if ("error" in data) {
+          setIsLoading(false);
+          return toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: data.error,
+          });
+        }
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      });
   };
 
-  // console.log(info);
-  // info.password === info.confirmPassword
-  //   ? console.log("valid")
-  //   : console.log("invalid");
+  
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form action={handleSubmit}>
+      <form action={handleSignUp}>
         <div className="grid gap-2">
           <div className="grid gap-1">
             <Label className="sr-only" htmlFor="email">
@@ -131,31 +144,8 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
           </Button>
         </div>
       </form>
-      {error && (
-        <Alert variant="destructive">
-          <ExclamationTriangleIcon className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-      {/* <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <span className="w-full border-t" />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div> */}
-      {/* <Button variant="outline" type="button" disabled={isLoading}>
-        {isLoading ? (
-        //   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-        ) : (
-        //   <Icons.gitHub className="mr-2 h-4 w-4" />
-        )}{" "}
-        GitHub
-      </Button> */}
+     
+     
     </div>
   );
 };
