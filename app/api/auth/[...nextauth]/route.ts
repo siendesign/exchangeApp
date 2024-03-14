@@ -3,31 +3,27 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { NextAuthOptions } from "next-auth";
 import Users from "@/models/usersmodel";
 import bcrypt from "bcrypt";
+import db from "@/lib/db";
+
 
 const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "credentials",
       credentials: {},
-      async authorize(credentials, req) {
-        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
-        // const res = await fetch("/api/login", {
-        //   method: "POST",
-        //   body: JSON.stringify(credentials),
-        //   headers: { "Content-Type": "application/json" },
-        // });
+      async authorize(credentials:any, req) {
+        db.connect();
+        const { email, password } = credentials;
+        // let email = credentials.email;
+        let user = await Users.findOne({ email });
 
-        // const user = await res.json();
+        if (user != null) {
+          
+          const validPassword = bcrypt.compareSync(password, user.password);
 
-        console.log(credentials);
-
-        return user;
-
-        // if (res.ok && user) {
-        //   return user;
-        // }
-        // Return null if user data could not be retrieved
-        // return null;
+          if (validPassword) return user;
+        }
+       
       },
     }),
   ],

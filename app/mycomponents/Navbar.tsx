@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import React from "react";
 
 const Navbar = () => {
@@ -22,9 +24,14 @@ const Navbar = () => {
           </div>
         </div>
         <div className="">
-          <button className="w-32 h-10 rounded-xl bg-black border dark:border-white border-transparent text-white text-xs">
-            Try now
-          </button>
+          <Button
+            asChild
+            className="w-32 h-10 rounded-xl bg-black border dark:border-white border-transparent text-white text-xs"
+          >
+            <Link href="/signup">
+              <span className="text-sm font-medium leading-none"> Try now</span>
+            </Link>
+          </Button>
         </div>
       </div>
     </div>

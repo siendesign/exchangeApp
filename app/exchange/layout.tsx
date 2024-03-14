@@ -1,4 +1,8 @@
+"use client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { signOut } from "next-auth/react";
+
 import Link from "next/link";
 
 export default function Layout({children,
@@ -14,6 +18,7 @@ export default function Layout({children,
                 <div className="capitalize font-semibold text-gray-500">
                     <Link href={'/exchange'} className="py-2 px-4 hover:bg-gray-100 rounded hover:text-gray-950">exchange</Link>
                     <Link href={'/exchange/orders'} className="py-2 px-4 hover:bg-gray-100 rounded hover:text-gray-950">orders</Link>
+                    <Button onClick={()=>signOut()}> signout</Button>
                 </div>
                 <Avatar>
                     <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />

@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 interface LoginAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -51,6 +53,8 @@ const LoginAuthForm = ({ className, ...props }: LoginAuthFormProps) => {
         redirect: false,
       })
 
+      // console.log(res);
+
       if (res?.error) {
         setIsLoading(false);
         return toast({
@@ -60,7 +64,8 @@ const LoginAuthForm = ({ className, ...props }: LoginAuthFormProps) => {
             "There was a problem with your request. All credentials must be provided!",
         });
       }
-
+      setIsLoading(true);
+      // redirect("/exchange");
       router.push("/exchange");
     } catch (error) {
       console.log(error);
