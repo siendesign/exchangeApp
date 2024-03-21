@@ -1,6 +1,11 @@
-
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import {
 //   fetchAllCurrencyPairs,
@@ -41,10 +46,10 @@ const page = async () => {
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics" disabled>
-                Analytics
+              <TabsTrigger value="orders" >
+                Orders
               </TabsTrigger>
-              <TabsTrigger value="reports" disabled>
+              <TabsTrigger value="reports" >
                 Reports
               </TabsTrigger>
               <TabsTrigger value="notifications" disabled>
@@ -177,12 +182,13 @@ const page = async () => {
                 </Card>
               </div>
             </TabsContent>
+            <TabsContent value="orders" className="space-y-4">
+              <div className="">Orders</div>
+            </TabsContent>
           </Tabs>
         </div>
       </div>
     </>
-
-    
   );
 };
 

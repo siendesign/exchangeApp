@@ -1,8 +1,6 @@
-import Link from 'next/link'
-import React from 'react'
-import UserAuthForm from '../signup/components/user-auth-form'
 import { buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
 import LoginAuthForm from './components/login-auth'
 
 const page = () => {
@@ -54,11 +52,9 @@ const page = () => {
           <div className="relative z-20 mt-auto">
             <blockquote className="space-y-2">
               <p className="text-lg">
-                &ldquo;This library has saved me countless hours of work and
-                helped me deliver stunning designs to my clients faster than
-                ever before.&rdquo;
+              "Opportunities come infrequently. When it rains gold, put out the bucket, not the thimble."
               </p>
-              <footer className="text-sm">Sofia Davis</footer>
+              <footer className="text-sm">- Warren Buffett</footer>
             </blockquote>
           </div>
         </div>

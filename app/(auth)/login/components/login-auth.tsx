@@ -7,8 +7,6 @@ import { cn } from "@/lib/utils";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 interface LoginAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 

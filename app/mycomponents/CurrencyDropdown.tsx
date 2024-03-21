@@ -31,6 +31,9 @@ const CurrencyDropdown = ({ setFrom, setRate }: Props) => {
     setRate(0.00);
   };
 
+  console.log(data);
+  
+
   if (isLoading) {
     return <div>Loading...</div>;
   }

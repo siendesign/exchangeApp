@@ -9,6 +9,7 @@ export default function Layout({children,
 }: Readonly<{
   children: React.ReactNode;
 }>){
+    
     return(
         <main className="max-w-6xl mx-auto p-8 flex flex-col gap-10">
             <div className="flex items-center justify-between">
