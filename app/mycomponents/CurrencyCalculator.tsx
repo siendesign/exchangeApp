@@ -26,7 +26,7 @@ const CurrencyCalculator = () => {
   };
 
   const getUserRole = async (email:string) => {
-    const data = await fetch(`/api/user/essienvictoryette01@gmail.com`);
+    const data = await fetch(`/api/user/${email}`);
     const json = await data.json();
     if(json.role === "admin") {
       router.push("/dashboard");
