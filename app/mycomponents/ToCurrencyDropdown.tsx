@@ -14,21 +14,35 @@ import { useQuery } from "@tanstack/react-query";
 interface Props {
   from: string;
   setRate: React.Dispatch<React.SetStateAction<number>>;
+  setToSymbol: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ToCurrencyDropdown = ({ from, setRate }: Props) => {
+const ToCurrencyDropdown = ({ from, setRate, setToSymbol }: Props) => {
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["to-currency"],
     queryFn: () => getCurrencyPairs(from),
     enabled: !!from,
   });
 
+  const handleChangeToValue = async (value: string) => {
+    let obj = data?.find((o) => o.to === value);
+    // console.log(obj);
+
+    const currencyData = await fetch(`/api/currencies/${value}`);
+    const currency = await currencyData.json();
+
+    // console.log(currency);
+    setToSymbol(currency?.symbol!);
+
+    setRate(Number(obj?.rate!));
+  };
+
   if (isFetching) {
-    return <div>Loading...</div>;
+    return <div  className="my-4">Loading...</div>;
   }
 
   return (
-    <Select onValueChange={(value)=>setRate(Number(value))}>
+    <Select onValueChange={(value) => handleChangeToValue(value)}>
       <SelectTrigger
         className="w-full border-0 my-3 shadow-none"
         disabled={!data}
@@ -39,7 +53,7 @@ const ToCurrencyDropdown = ({ from, setRate }: Props) => {
         <SelectGroup>
           <SelectLabel>Currencies</SelectLabel>
           {data?.map((currency) => (
-            <SelectItem key={currency._id} value={currency.rate}>
+            <SelectItem key={currency._id} value={currency.to}>
               {currency.to}
             </SelectItem>
           ))}

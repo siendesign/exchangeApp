@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: { email: string } }
 ) {
   const email = params.email;
-  console.log(email);
+  // console.log(email);
   
   try {
     db.connect();
@@ -17,4 +17,4 @@ export async function GET(
   } catch (error) {
     return NextResponse.json("error: " + error, { status: 500 });
   }
-}
+} 

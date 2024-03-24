@@ -14,10 +14,21 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface Props {
   setFrom: React.Dispatch<React.SetStateAction<string>>;
+  setToAmount: React.Dispatch<React.SetStateAction<number>>;
+  setFromAmount: React.Dispatch<React.SetStateAction<number>>;
+  setFromSymbol: React.Dispatch<React.SetStateAction<string>>;
+  setToSymbol: React.Dispatch<React.SetStateAction<string>>;
   setRate: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const CurrencyDropdown = ({ setFrom, setRate }: Props) => {
+const CurrencyDropdown = ({
+  setFrom,
+  setRate,
+  setFromSymbol,
+  setToSymbol,
+  setToAmount,
+  setFromAmount,
+}: Props) => {
   const queryClient = useQueryClient();
 
   const { data, isLoading, isFetching } = useQuery({
@@ -28,14 +39,21 @@ const CurrencyDropdown = ({ setFrom, setRate }: Props) => {
   const handleValue = (value: string) => {
     setFrom(value);
     queryClient.removeQueries({ queryKey: ["to-currency"], exact: true });
-    setRate(0.00);
+    setRate(0.0);
+    setToSymbol("#");
+    setToAmount(0.0);
+    setFromAmount(0);
+    // console.log(value);
+
+    // console.log(data);
+
+    let obj = data?.find((o) => o.abbrev === value);
+    setFromSymbol(obj?.symbol!);
+    console.log(obj?.symbol);
   };
 
-  console.log(data);
-  
-
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="my-4">Loading...</div>;
   }
 
   return (

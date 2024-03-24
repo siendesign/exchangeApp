@@ -15,7 +15,8 @@ const CurrencyCalculator = () => {
   const [fromAmount, setFromAmount] = useState(0.0);
   const [focus, setFocus] = useState("from");
   const [toAmount, setToAmount] = useState(0.0);
-
+  const [fromSymbol, setFromSymbol] = useState("#");
+  const [toSymbol, setToSymbol] = useState("#");
 
   const handleChangeToValue = (e: any) => {
     const num = e.target.value;
@@ -25,10 +26,10 @@ const CurrencyCalculator = () => {
     setToAmount(parseFloat(((1 / rate) * num).toFixed(2)));
   };
 
-  const getUserRole = async (email:string) => {
+  const getUserRole = async (email: string) => {
     const data = await fetch(`/api/user/${email}`);
     const json = await data.json();
-    if(json.role === "admin") {
+    if (json.role === "admin") {
       router.push("/dashboard");
     }
     return json.role;
@@ -37,22 +38,29 @@ const CurrencyCalculator = () => {
   if (session) {
     // alert(session?.user?.email)
     const userRole = getUserRole(session?.user?.email!);
-    
-    console.log(userRole);
-    
+
     return (
       <>
-        <div className="">{session?.user?.email}</div>
+        {/* <div className="">{session?.user?.email}</div> */}
         <div className="flex flex-col sm:flex-row gap-10 w-full">
           <div className="flex-1 flex flex-col gap-3">
             <h3 className="capitalize text-sm text-gray-500 font-semibold">
               from
             </h3>
             <div className="border-b">
-              <CurrencyDropdown setFrom={setFrom} setRate={setRate} />
+              <CurrencyDropdown
+                setFrom={setFrom}
+                setRate={setRate}
+                setFromSymbol={setFromSymbol}
+                setToSymbol={setToSymbol}
+                setToAmount={setToAmount}
+                setFromAmount={setFromAmount}
+              />
             </div>
             <div className="text-4xl sm:text-7xl grid grid-cols-12 gap-6">
-              <span className="col-span-2 flex items-center font-thin">£</span>
+              <span className="col-span-2 flex items-center font-semibold text-3xl text-gray-500 text-center justify-center">
+                {fromSymbol}
+              </span>
               <div className="col-span-10">
                 <input
                   type="number"
@@ -74,10 +82,16 @@ const CurrencyCalculator = () => {
               to
             </h3>
             <div className="border-b">
-              <ToCurrencyDropdown from={from} setRate={setRate} />
+              <ToCurrencyDropdown
+                from={from}
+                setRate={setRate}
+                setToSymbol={setToSymbol}
+              />
             </div>
             <div className="text-4xl sm:text-7xl grid grid-cols-12 gap-6">
-              <span className="col-span-2 flex items-center font-thin">$</span>
+              <span className="col-span-2 flex items-center font-semibold text-3xl text-gray-500 text-center justify-center">
+                {toSymbol}
+              </span>
               <div className="col-span-10">
                 <input
                   type="number"
@@ -108,13 +122,13 @@ const CurrencyCalculator = () => {
               <div className="text-xl font-semibold">{rate}</div>
             </div>
             <div className="">
-              <h3 className="text-sm text-gray-500 capitalize">precentage</h3>
+              {/* <h3 className="text-sm text-gray-500 capitalize">precentage</h3>
               <div className="text-xl font-semibold text-green-500 flex items-end gap-2">
                 <span className="">
                   <FaCaretUp />
                 </span>{" "}
                 0.00058 (0.74%)
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
