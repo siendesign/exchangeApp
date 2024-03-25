@@ -19,12 +19,12 @@ export default function Layout({children,
                 <div className="capitalize font-semibold text-gray-500">
                     <Link href={'/exchange'} className="py-2 px-4 hover:bg-gray-100 rounded hover:text-gray-950">exchange</Link>
                     <Link href={'/exchange/orders'} className="py-2 px-4 hover:bg-gray-100 rounded hover:text-gray-950">orders</Link>
-                    <Button onClick={()=>signOut()}> signout</Button>
+                    <Button className="mx-2" onClick={()=>signOut()}> signout</Button>
                 </div>
-                <Avatar>
+                {/* <Avatar>
                     <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
                     <AvatarFallback className="uppercase">ve</AvatarFallback>
-                </Avatar>
+                </Avatar> */}
                 </div>
             </div>
             {children}

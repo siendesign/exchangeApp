@@ -22,8 +22,17 @@ const CurrencyCalculator = () => {
     const num = e.target.value;
     // const options = {  maximumFractionDigits: 2   } ;
     // const formattedNumber = Intl.NumberFormat("en-US",options).format(num);
-    setFromAmount(num);
-    setToAmount(parseFloat(((1 / rate) * num).toFixed(2)));
+
+    // console.log(focus);
+    
+    if (focus === "from") {
+      setFromAmount(num);
+      setToAmount(parseFloat(((1 / rate) * num).toFixed(2)));
+    }
+    if (focus === "to") {
+      setToAmount(num);
+      setFromAmount(parseFloat(((rate * num).toFixed(2))));
+    }
   };
 
   const getUserRole = async (email: string) => {
@@ -102,7 +111,8 @@ const CurrencyCalculator = () => {
                   onFocus={() => {
                     setFocus("to");
                   }}
-                  onChange={(e) => setToAmount(+e.currentTarget.value)}
+                  // onChange={(e) => setToAmount(+e.currentTarget.value)}
+                  onChange={handleChangeToValue}
                 />
               </div>
             </div>
