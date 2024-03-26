@@ -56,6 +56,7 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
       body: JSON.stringify({
         email: email,
         password: password,
+        role:"user"
       }),
     })
       .then((response) => response.json())

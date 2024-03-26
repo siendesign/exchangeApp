@@ -73,16 +73,15 @@ export default function Layout({
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Link
-                    href={"/exchange"}
+                    href={"/exchange/orders"}
                     className=" hover:bg-gray-100  w-full"
                   >
                     orders
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuItem disabled>API</DropdownMenuItem>
+                
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => signOut()}>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
