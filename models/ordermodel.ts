@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 const OrderSchema = new mongoose.Schema({
-    userId:{type: String, required: true},
-    status: {type: String, required: true},
-    destinationAccountNumber:{type: String, required: true},
-    destinationAccountName:{type: String, required: true}
-    
+    userEmail:{type: String},
+    status: {type: String},
+    destinationAccountNumber:{type: String},
+    destinationAccountName:{type: String},
+    paymentWalletAddress:{type: String}
 });
 
 export default mongoose?.models?.Orders || mongoose.model("Orders", OrderSchema);

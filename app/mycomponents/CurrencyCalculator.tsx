@@ -6,6 +6,17 @@ import Orderdialogue from "./Orderdialogue";
 import ToCurrencyDropdown from "./ToCurrencyDropdown";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 
 const CurrencyCalculator = () => {
   const router = useRouter();
@@ -24,15 +35,18 @@ const CurrencyCalculator = () => {
     // const formattedNumber = Intl.NumberFormat("en-US",options).format(num);
 
     // console.log(focus);
-    
+    if (rate === 0) return;
+
     if (focus === "from") {
       setFromAmount(num);
       setToAmount(parseFloat(((1 / rate) * num).toFixed(2)));
     }
     if (focus === "to") {
       setToAmount(num);
-      setFromAmount(parseFloat(((rate * num).toFixed(2))));
+      setFromAmount(parseFloat((rate * num).toFixed(2)));
     }
+
+
   };
 
   const getUserRole = async (email: string) => {
@@ -122,7 +136,24 @@ const CurrencyCalculator = () => {
         <div className="flex gap-10 w-full">
           <div className="flex-1">
             {/* <Button className="w-full">place an order</Button> */}
-            <Orderdialogue />
+            {/* <Orderdialogue /> */}
+            <Drawer>
+              <DrawerTrigger className="border w-full h-full rounded-lg bg-black hover:bg-black/90 text-white" disabled={false} >Place an order</DrawerTrigger>
+              <DrawerContent className="h-[90vh]">
+                <DrawerHeader>
+                  <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+                  <DrawerDescription>
+                    This action cannot be undone.
+                  </DrawerDescription>
+                </DrawerHeader>
+                <DrawerFooter>
+                  <Button>Submit</Button>
+                  <DrawerClose>
+                    <Button variant="outline">Cancel</Button>
+                  </DrawerClose>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
           </div>
           <div className="flex-1 flex items-center gap-10">
             <div className="">
