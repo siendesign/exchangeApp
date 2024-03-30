@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FaCaretUp } from "react-icons/fa6";
 import CurrencyDropdown from "./CurrencyDropdown";
 import Orderdialogue from "./Orderdialogue";
@@ -17,6 +17,10 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { CopyIcon } from "@radix-ui/react-icons";
 
 const CurrencyCalculator = () => {
   const router = useRouter();
@@ -45,8 +49,6 @@ const CurrencyCalculator = () => {
       setToAmount(num);
       setFromAmount(parseFloat((rate * num).toFixed(2)));
     }
-
-
   };
 
   const getUserRole = async (email: string) => {
@@ -56,6 +58,13 @@ const CurrencyCalculator = () => {
       router.push("/dashboard");
     }
     return json.role;
+  };
+
+  const walletAddress = useRef<any | null>(null);
+
+  const handleCopyAddress = () => {
+    const address = walletAddress.current;
+    alert(`${address.value}`);
   };
 
   if (session) {
@@ -138,14 +147,70 @@ const CurrencyCalculator = () => {
             {/* <Button className="w-full">place an order</Button> */}
             {/* <Orderdialogue /> */}
             <Drawer>
-              <DrawerTrigger className="border w-full h-full rounded-lg bg-black hover:bg-black/90 text-white" disabled={false} >Place an order</DrawerTrigger>
+              <DrawerTrigger
+                className="border w-full h-full rounded-lg bg-black hover:bg-black/90 text-white"
+                disabled={false}
+              >
+                Place an order
+              </DrawerTrigger>
               <DrawerContent className="h-[90vh]">
                 <DrawerHeader>
-                  <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+                  <DrawerTitle>Create Order</DrawerTitle>
                   <DrawerDescription>
-                    This action cannot be undone.
+                    You will receive {toAmount}
                   </DrawerDescription>
                 </DrawerHeader>
+
+                <div className="flex justify-center">
+                  <div className="h-40 w-40 relative">
+                    <Image
+                      src={
+                        "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAM0AAADNAQAAAAAzx8nEAAABwUlEQVR4nO2XMa6DQAxEJ6Kg5Ah7k+RiSCBxMXKTPcKWFAj/GW8S8hOlNUVCsT/fj8Kyx94B9ulZ8ENfjwqAU+lhczdloFv5P4Z4NJhdbTJFk206FAtHPdpraazd0HuuicdRCDxsVI2ORDam+sveMoxC6lcZMhW7+psvrYxCVb2J1arHm7BDkD+KzmhsOXevYx6FprxAwlWUaMRy71ckKk3m/EABpFqjI5CtlCsV462SevGQTSSicFsJd7noJXRjwhnxiP1qtWC12aQd7EMUiYo0yygVsyq5/in5SNQnv2mk3ux180kKR43Z5inx4HJpnjxALFI0895lZFbTjkAS7pliqbLhvk20BAcgy9A20VJLuDz2SjSaVKO1rlV5o102ocjMbxp1ictF3ugx5pGI1rBOMIfIB3rZCxWHmJLveb94rMqmxCO6wrpITvKHfCnt/QpE8mTyh+3mHgBukIZwdHNE0HrLHsWTesPQ3R9ykmiZfbPNRyBNcJEj0hgrw1qyaHT7duBSkynRx8z2uHyDkbSjz1sKaE3/M4xEN/VmaVcfEEM88n5RsyqUC3e/lyMR6iLhnybXy3fr4tGH54e+Hf0BMRb05eDsSloAAAAASUVORK5CYII="
+                      }
+                      fill
+                      alt="qr"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2 px-5 mt-5">
+                  <div className="grid flex-1 gap-2">
+                    <Label htmlFor="link" className="sr-only">
+                      Link
+                    </Label>
+                    <Input
+                      ref={walletAddress}
+                      id="link"
+                      defaultValue="mmdFAhC81X5YkwvqNdRy8Gmwd588vYwc4n"
+                      readOnly
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    className="px-3"
+                    onClick={handleCopyAddress}
+                  >
+                    <span className="sr-only">Copy</span>
+                    <CopyIcon className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <div className="flex flex-col gap-5 justify-center items-center space-x-2 px-5 mt-5">
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="email">Destination Account Number</Label>
+                    <Input type="text" id="email" placeholder="Enter Destination account number" />
+                  </div>
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="email">Destination Bank name</Label>
+                    <Input type="text" id="email" placeholder="Enter Destirnation bank name" />
+                  </div>
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="email">Destination Country</Label>
+                    <Input type="text" id="email" placeholder="Enter Destirnation bank country" />
+                  </div>
+                  
+                </div>
                 <DrawerFooter>
                   <Button>Submit</Button>
                   <DrawerClose>
