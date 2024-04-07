@@ -1,4 +1,5 @@
-import React from 'react'
+"use client"
+import React, { useEffect, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -20,6 +21,8 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+import { useSession } from "next-auth/react";
+
 
 
 const invoices = [
@@ -73,11 +76,34 @@ const invoices = [
     paymentMethod: "Credit Card",
   },
 ]
-const page = () => {
+const page =  () => {
+  const { data: session } = useSession();
+
+  const [orders, setOrders] = useState<any | null>()
+  
+  useEffect(() => {
+    console.log(session?.user?.email!);
+    
+    if (session) {
+      
+      let i = 0
+      setInterval(async()=>{
+        console.log(i++);
+        // const response = await fetch(`/api/order/itoro@gmail.com`)
+        const response = await fetch(`/api/order/${session?.user?.email!}`)
+        const userorders = await response.json()
+        setOrders(userorders)
+  
+        console.log(userorders);
+        
+      },5000)
+    }
+  }, [session])
+  
   return (
     <div>
       <Table>
-      <TableCaption>A list of your recent orders.</TableCaption>
+      <TableCaption>A list of your recent orders.{session?.user?.email!}</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[100px]">Order ID</TableHead>
@@ -89,13 +115,13 @@ const page = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className="font-medium">{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell>{invoice.currency}</TableCell>
-            <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+        {orders && orders?.map((order:any) => (
+          <TableRow key={order._id}>
+            <TableCell className="font-medium">{order._id}</TableCell>
+            <TableCell>{order.status}</TableCell>
+            <TableCell>{order.destinationAccountName}</TableCell>
+            <TableCell>{order.toAmount!}</TableCell>
+            <TableCell className="text-right"></TableCell>
             <TableCell className="text-right">
             <Drawer>
               <DrawerTrigger>view</DrawerTrigger>

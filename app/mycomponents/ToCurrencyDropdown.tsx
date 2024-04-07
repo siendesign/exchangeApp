@@ -15,9 +15,10 @@ interface Props {
   from: string;
   setRate: React.Dispatch<React.SetStateAction<number>>;
   setToSymbol: React.Dispatch<React.SetStateAction<string>>;
+  setTo: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const ToCurrencyDropdown = ({ from, setRate, setToSymbol }: Props) => {
+const ToCurrencyDropdown = ({ from, setRate, setToSymbol, setTo }: Props) => {
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["to-currency"],
     queryFn: () => getCurrencyPairs(from),
@@ -33,7 +34,7 @@ const ToCurrencyDropdown = ({ from, setRate, setToSymbol }: Props) => {
 
     // console.log(currency);
     setToSymbol(currency?.symbol!);
-
+    setTo(value);
     setRate(Number(obj?.rate!));
   };
 

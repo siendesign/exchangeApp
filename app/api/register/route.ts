@@ -9,9 +9,7 @@ export async function POST(req: NextRequest) {
   const { email, password, role } = await req.json();
   const saltRounds = 10;
   const salt = bcrypt.genSaltSync(saltRounds);
-
   const hashedPassword = bcrypt.hashSync(password, salt);
-
   const exists = await Users.find({ email: email });
 
   console.log(exists.length);
@@ -27,11 +25,13 @@ export async function POST(req: NextRequest) {
   }
 
   console.log({ email, password, hashedPassword });
+  
   const newUser = new Users({
     email: email,
     password: hashedPassword,
     role: role,
   });
+
   await newUser.save();
   return NextResponse.json({ email }, { status: 200 });
 }
