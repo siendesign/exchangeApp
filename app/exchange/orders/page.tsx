@@ -109,9 +109,9 @@ const page = () => {
                                 alt="qr"
                               />
                             </div>
-                            <div className="pt-4 flex flex-col gap-2">
-                              <div className="flex gap-5 items-center">
-                                <div className="capitalize font-medium ">
+                            <div className="pt-4 flex flex-col gap-2 flex-grow ">
+                              <div className="flex gap-1 items-center">
+                                <div className="capitalize font-medium flex-grow  flex justify-between">
                                   wallet :{" "}
                                   <span className="lowercase text-gray-500">
                                     {order.paymentWalletAddress}
@@ -128,8 +128,8 @@ const page = () => {
                                   <CopyIcon className="h-4 w-4" />
                                 </Button>
                               </div>
-                              <div className="flex gap-5 items-center">
-                                <div className="capitalize font-medium ">
+                              <div className="flex  gap-5 items-center ">
+                                <div className="capitalize font-medium flex-grow  flex justify-between">
                                   Destination Account Number :{" "}
                                   <span className="lowercase text-gray-500">
                                     {order.destinationAccountNumber}
@@ -137,7 +137,7 @@ const page = () => {
                                 </div>
                               </div>
                               <div className="flex gap-5 items-center">
-                                <div className="capitalize font-medium ">
+                                <div className="capitalize font-medium flex-grow  flex justify-between">
                                   Destination Account Name :{" "}
                                   <span className=" text-gray-500">
                                     {order.destinationAccountName}
@@ -145,7 +145,7 @@ const page = () => {
                                 </div>
                               </div>
                               <div className="flex gap-5 items-center">
-                                <div className="capitalize font-medium ">
+                                <div className="capitalize font-medium flex-grow  flex justify-between">
                                   Destination Bank Name :{" "}
                                   <span className=" text-gray-500">
                                     {order.destinationBankName}

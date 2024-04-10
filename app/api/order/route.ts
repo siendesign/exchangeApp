@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
 
   const newOrder = new Orders({
     userEmail: userEmail,
-    status: "Pending",
+    status: "waiting...",
     destinationAccountNumber: destinationAccountNumber,
     destinationAccountName: destinationAccountName,
     destinationAccountCountry: destinationCountry,
