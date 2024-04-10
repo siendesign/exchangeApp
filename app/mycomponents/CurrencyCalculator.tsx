@@ -34,7 +34,6 @@ const CurrencyCalculator = () => {
   const [fromSymbol, setFromSymbol] = useState("#");
   const [toSymbol, setToSymbol] = useState("#");
 
-
   //orderdata
   const [destinationAccountNumber, setDestinationAccountNumber] = useState("");
   const [destinationAccountName, setDestinationAccountName] = useState("");
@@ -75,33 +74,38 @@ const CurrencyCalculator = () => {
     alert(`${address.value}`);
   };
 
-  const handlePlaceOrder = async()=>{
-    console.log("order placed by "+session?.user?.email!);
+  const handlePlaceOrder = async () => {
+    console.log("order placed by " + session?.user?.email!);
 
     let data = {
-      userEmail:session?.user?.email!,destinationAccountNumber, 
-      destinationAccountName, 
-      walletAddress:walletAddress.current.value, 
-      from, 
-      to, 
-      destinationCountry, 
-      destinationBankName, 
-      rate, 
-      fromAmount, 
-      toAmount}
-    
+      userEmail: session?.user?.email!,
+      destinationAccountNumber,
+      destinationAccountName,
+      walletAddress: walletAddress.current.value,
+      from,
+      to,
+      destinationCountry,
+      destinationBankName,
+      rate,
+      fromAmount,
+      toAmount,
+      toSymbol,
+      fromSymbol,
+    };
 
     console.log(data);
-    
-    await fetch('api/order', {
-      method:"POST",
+
+    await fetch("api/order", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
-    }).then(response=> response.json()).then(data=>{console.log(data)
-      router.push("/exchange/orders");
     })
-
-  }
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        router.push("/exchange/orders");
+      });
+  };
 
   if (session) {
     // alert(session?.user?.email)
@@ -152,7 +156,7 @@ const CurrencyCalculator = () => {
             <div className="border-b">
               <ToCurrencyDropdown
                 from={from}
-                setTo = {setTo}
+                setTo={setTo}
                 setRate={setRate}
                 setToSymbol={setToSymbol}
               />
@@ -234,7 +238,6 @@ const CurrencyCalculator = () => {
                     </div>
 
                     <div className="flex-grow flex items-start ">
-
                       <div className="flex w-full flex-col gap-5 justify-center items-center sm:items-start space-x-2 px-5 mt-5">
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                           <Label htmlFor="email">
@@ -244,7 +247,9 @@ const CurrencyCalculator = () => {
                             type="text"
                             placeholder="Enter Destination account number"
                             value={destinationAccountNumber}
-                            onChange={e=> setDestinationAccountNumber(e.target.value)}
+                            onChange={(e) =>
+                              setDestinationAccountNumber(e.target.value)
+                            }
                           />
                         </div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -255,7 +260,9 @@ const CurrencyCalculator = () => {
                             type="text"
                             placeholder="Enter Destination account number"
                             value={destinationAccountName}
-                            onChange={e=> setDestinationAccountName(e.target.value)}
+                            onChange={(e) =>
+                              setDestinationAccountName(e.target.value)
+                            }
                           />
                         </div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -264,7 +271,9 @@ const CurrencyCalculator = () => {
                             type="text"
                             placeholder="Enter Destirnation bank name"
                             value={destinationBankName}
-                            onChange={e=> setDestinationBankName(e.target.value)}
+                            onChange={(e) =>
+                              setDestinationBankName(e.target.value)
+                            }
                           />
                         </div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
@@ -273,7 +282,9 @@ const CurrencyCalculator = () => {
                             type="text"
                             placeholder="Enter Destirnation bank country"
                             value={destinationCountry}
-                            onChange={e=> setDestinationCountry(e.target.value)}
+                            onChange={(e) =>
+                              setDestinationCountry(e.target.value)
+                            }
                           />
                         </div>
                       </div>
@@ -282,7 +293,9 @@ const CurrencyCalculator = () => {
                 </div>
 
                 <DrawerFooter className="sm:flex-row">
-                  <Button className=" sm:order-2" onClick={handlePlaceOrder}>place Order</Button>
+                  <Button className=" sm:order-2" onClick={handlePlaceOrder}>
+                    place Order
+                  </Button>
                   <DrawerClose>
                     <Button variant="outline">Cancel</Button>
                   </DrawerClose>

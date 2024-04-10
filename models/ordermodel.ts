@@ -11,6 +11,8 @@ const OrderSchema = new mongoose.Schema(
     paymentWalletAddress: { type: String },
     fromCurrency: { type: String },
     toCurrency: { type: String },
+    fromSymbol: { type: String },
+    toSymbol: { type: String },
     fromAmount: { type: Number },
     toAmount: { type: Number },
     rate: { type: String },

@@ -15,8 +15,9 @@ export async function POST(req: NextRequest) {
     rate,
     fromAmount,
     toAmount,
+    toSymbol,
+    fromSymbol,
   } = await req.json();
-
 
   const newOrder = new Orders({
     userEmail: userEmail,
@@ -31,10 +32,12 @@ export async function POST(req: NextRequest) {
     fromAmount: +fromAmount,
     toAmount: +toAmount,
     rate: rate,
+    toSymbol: toSymbol,
+    fromSymbol: fromSymbol,
   });
 
   console.log(newOrder);
-  
+
   await newOrder.save();
 
   return NextResponse.json(
@@ -43,6 +46,4 @@ export async function POST(req: NextRequest) {
   );
 }
 
-export async function GET(req: NextRequest) {
-    
-}
+export async function GET(req: NextRequest) {}
