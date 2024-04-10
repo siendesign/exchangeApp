@@ -66,10 +66,11 @@ const page = () => {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Order ID</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Method</TableHead>
-            <TableHead>Currency</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
+            {/* <TableHead>Method</TableHead> */}
+            <TableHead>From</TableHead>
+            <TableHead>To</TableHead>
+            <TableHead>Amount</TableHead>
+            <TableHead className="text-right">Status</TableHead>
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -77,13 +78,18 @@ const page = () => {
           {orders &&
             orders?.map((order: any) => (
               <TableRow key={order._id}>
-                <TableCell className="font-medium">{order._id}</TableCell>
-                <TableCell className="text-yellow-600">
+                <TableCell className="font-medium text-gray-500">
+                  {order._id}
+                </TableCell>
+                {/* <TableCell>{order.destinationAccountName}</TableCell> */}
+                <TableCell>{order.fromCurrency}</TableCell>
+                <TableCell>{order.toCurrency}</TableCell>
+                <TableCell className=" font-medium">
+                  {order.toSymbol + " " + order.toAmount!}
+                </TableCell>
+                <TableCell className="text-yellow-600 text-right">
                   {order.status}
                 </TableCell>
-                <TableCell>{order.destinationAccountName}</TableCell>
-                <TableCell>{order.toCurrency}</TableCell>
-                <TableCell className="text-right">{order.toAmount!}</TableCell>
                 <TableCell className="text-right">
                   <Drawer>
                     <DrawerTrigger>view</DrawerTrigger>
@@ -99,7 +105,7 @@ const page = () => {
                             </div>
                           </div>
                           <hr />
-                          <div className="flex gap-5 py-4">
+                          <div className="flex flex-col sm:flex-row gap-5 py-4">
                             <div className="h-40 w-40 sm:h-76 sm:w-76  relative">
                               <Image
                                 src={
@@ -111,7 +117,7 @@ const page = () => {
                             </div>
                             <div className="pt-4 flex flex-col gap-2 flex-grow ">
                               <div className="flex gap-1 items-center">
-                                <div className="capitalize font-medium flex-grow  flex justify-between">
+                                <div className="capitalize font-medium flex-grow  flex flex-col sm:flex-row  justify-between">
                                   wallet :{" "}
                                   <span className="lowercase text-gray-500">
                                     {order.paymentWalletAddress}
@@ -129,7 +135,7 @@ const page = () => {
                                 </Button>
                               </div>
                               <div className="flex  gap-5 items-center ">
-                                <div className="capitalize font-medium flex-grow  flex justify-between">
+                                <div className="capitalize font-medium flex-grow  flex flex-col sm:flex-row justify-between">
                                   Destination Account Number :{" "}
                                   <span className="lowercase text-gray-500">
                                     {order.destinationAccountNumber}
@@ -137,7 +143,7 @@ const page = () => {
                                 </div>
                               </div>
                               <div className="flex gap-5 items-center">
-                                <div className="capitalize font-medium flex-grow  flex justify-between">
+                                <div className="capitalize font-medium flex-grow  flex flex-col sm:flex-row justify-between">
                                   Destination Account Name :{" "}
                                   <span className=" text-gray-500">
                                     {order.destinationAccountName}
@@ -145,21 +151,55 @@ const page = () => {
                                 </div>
                               </div>
                               <div className="flex gap-5 items-center">
-                                <div className="capitalize font-medium flex-grow  flex justify-between">
+                                <div className="capitalize font-medium flex-grow  flex flex-col sm:flex-row justify-between">
                                   Destination Bank Name :{" "}
                                   <span className=" text-gray-500">
                                     {order.destinationBankName}
                                   </span>
                                 </div>
                               </div>
+                              <div className="flex gap-5 items-center">
+                                <div className="capitalize font-medium flex-grow  flex justify-between">
+                                  From :{" "}
+                                  <span className=" text-gray-500">
+                                    {order.fromCurrency}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex gap-5 items-center">
+                                <div className="capitalize font-medium flex-grow  flex justify-between">
+                                  to :{" "}
+                                  <span className=" text-gray-500">
+                                    {order.toCurrency}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex gap-5 items-center">
+                                <div className="capitalize font-medium flex-grow  flex justify-between">
+                                  Send:{" "}
+                                  <span className=" text-gray-500">
+                                    {order.fromSymbol + " " + order.fromAmount}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex gap-5 items-center">
+                                <div className="capitalize font-medium flex-grow  flex justify-between">
+                                  Receive :{" "}
+                                  <span className=" text-gray-500">
+                                    {order.toSymbol + " " + order.toAmount}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
-                        <DrawerFooter className="flex-row justify-end">
+                        <DrawerFooter className="sm:flex-row justify-end">
                           <Button>Payment made</Button>
-                          {/* <DrawerClose>
-                            <Button variant="outline">Cancel</Button>
-                          </DrawerClose> */}
+                          <DrawerClose>
+                            <Button className="w-full" variant="outline">
+                              Cancel
+                            </Button>
+                          </DrawerClose>
                         </DrawerFooter>
                         {/* <DrawerHeader>
                     <DrawerTitle>Are you absolutely sure?</DrawerTitle>
