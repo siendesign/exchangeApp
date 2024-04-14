@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,11 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 //   fetchAllCurrencyPairs,
 //   getAllcurrencies
 // } from "@/lib/data";
-import { CalendarDateRangePicker } from "./components/date-range-picker";
-import { MainNav } from "./components/main-nav";
+import OrderTable from "./components/OrderTable";
 import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
-import TeamSwitcher from "./components/team-switcher";
 import { UserNav } from "./components/user-nav";
 
 const page = async () => {
@@ -46,12 +43,8 @@ const page = async () => {
           <Tabs defaultValue="overview" className="space-y-4">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="orders" >
-                Orders
-              </TabsTrigger>
-              <TabsTrigger value="reports" >
-                Reports
-              </TabsTrigger>
+              <TabsTrigger value="orders">Orders</TabsTrigger>
+              <TabsTrigger value="reports">Reports</TabsTrigger>
               <TabsTrigger value="notifications" disabled>
                 Notifications
               </TabsTrigger>
@@ -184,6 +177,10 @@ const page = async () => {
             </TabsContent>
             <TabsContent value="orders" className="space-y-4">
               <div className="">Orders</div>
+              <div className="">
+                <OrderTable />
+                
+              </div>
             </TabsContent>
           </Tabs>
         </div>

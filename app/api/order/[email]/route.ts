@@ -18,3 +18,12 @@ export async function GET(
   }
 }
 
+export async function PUT(req: NextRequest, { params}: { params: { email: string }}){
+  const email = params.email;
+  const data = await req.body;
+  return NextResponse.json(
+    { message: "sending", status: req},
+    { status: 200 }
+  );
+}
+

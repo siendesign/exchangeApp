@@ -1,5 +1,15 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import React, { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 import {
   Drawer,
   DrawerClose,
@@ -7,41 +17,18 @@ import {
   DrawerFooter,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
 import { CopyIcon } from "@radix-ui/react-icons";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
 import { updateOrderStatus } from "@/lib/action";
 
-const page = () => {
+const OrderTable = () => {
   const { data: session } = useSession();
-  const { toast } = useToast();
-
   const [orders, setOrders] = useState<any | null>();
-
-  const handleCopyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      // title: "Scheduled: Catch up ",
-      description: "copied to clipboard",
-    });
-  };
 
   const handleUpdateStatus = async (id: any, value: string) => {
     const update = await updateOrderStatus(id, value);
 
     console.log(update);
-
   };
 
   useEffect(() => {
@@ -52,7 +39,7 @@ const page = () => {
       setInterval(async () => {
         console.log(i++);
         // const response = await fetch(`/api/order/itoro@gmail.com`)
-        const response = await fetch(`/api/order/${session?.user?.email!}`);
+        const response = await fetch(`/api/order`);
         const userorders = await response.json();
         setOrders(userorders);
 
@@ -60,19 +47,19 @@ const page = () => {
       }, 5000);
     }
   }, [session]);
-
   return (
     <div>
       <Table>
-        <TableCaption>
-          A list of your recent orders.{session?.user?.email!}
-        </TableCaption>
+        {/* <TableCaption>
+      A list of your recent orders.{session?.user?.email!}
+    </TableCaption> */}
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">Order ID</TableHead>
-            {/* <TableHead>Method</TableHead> */}
+            <TableHead>User</TableHead>
             <TableHead>From</TableHead>
             <TableHead>To</TableHead>
+            <TableHead>rate</TableHead>
             <TableHead>Amount</TableHead>
             <TableHead className="text-right">Status</TableHead>
             <TableHead className="text-right">Action</TableHead>
@@ -85,9 +72,12 @@ const page = () => {
                 <TableCell className="font-medium text-gray-500">
                   {order._id}
                 </TableCell>
-                {/* <TableCell>{order.destinationAccountName}</TableCell> */}
+                <TableCell className="font-medium text-gray-500">
+                  {order.userEmail}
+                </TableCell>
                 <TableCell>{order.fromCurrency}</TableCell>
                 <TableCell>{order.toCurrency}</TableCell>
+                <TableCell>{order.rate}</TableCell>
                 <TableCell className=" font-medium">
                   {order.toSymbol + " " + order.toAmount!}
                 </TableCell>
@@ -145,11 +135,11 @@ const page = () => {
                                 </div>
                                 <Button
                                   variant={"ghost"}
-                                  onClick={() =>
-                                    handleCopyToClipboard(
-                                      order.paymentWalletAddress
-                                    )
-                                  }
+                                  //   onClick={() =>
+                                  //     handleCopyToClipboard(
+                                  //       order.paymentWalletAddress
+                                  //     )
+                                  //   }
                                 >
                                   <CopyIcon className="h-4 w-4" />
                                 </Button>
@@ -214,48 +204,38 @@ const page = () => {
                           </div>
                         </div>
                         <DrawerFooter className="sm:flex-row justify-end">
-                          {order.status != "waiting..." ? (
+                          {order.status === "Received" ? (
                             <Button
                               onClick={() =>
-                                handleUpdateStatus(order._id, "Completed")
+                                handleUpdateStatus(order._id, "Sending...")
                               }
-                              className="order-2"
                             >
-                              Complete
+                              Send
+                            </Button>
+                          ) : order.status === "Sending..." ? (
+                            <Button
+                              onClick={() =>
+                                handleUpdateStatus(order._id, "Sent")
+                              }
+                            >
+                              Sent
                             </Button>
                           ) : (
                             <Button
                               onClick={() =>
-                                handleUpdateStatus(order._id, "Receiving...")
+                                handleUpdateStatus(order._id, "Received")
                               }
-                              className="order-2"
                             >
-                              Payment made
+                              Received
                             </Button>
                           )}
 
-                          {/* <Button
-                            onClick={()=>handleUpdateStatus(order._id, "Receiving...")}
-                            className="order-2"
-                          >
-                            Payment made
-                          </Button> */}
                           <DrawerClose>
                             <Button className="w-full" variant="outline">
                               Cancel
                             </Button>
                           </DrawerClose>
                         </DrawerFooter>
-                        {/* <DrawerHeader>
-                    <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-                    <DrawerDescription>This action cannot be undone.</DrawerDescription>
-                  </DrawerHeader>
-                  <DrawerFooter>
-                    <Button>Submit</Button>
-                    <DrawerClose>
-                      <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
-                  </DrawerFooter> */}
                       </div>
                     </DrawerContent>
                   </Drawer>
@@ -264,14 +244,14 @@ const page = () => {
             ))}
         </TableBody>
         {/* <TableFooter>
-        <TableRow>
-          <TableCell colSpan={4}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter> */}
+<TableRow>
+<TableCell colSpan={4}>Total</TableCell>
+<TableCell className="text-right">$2,500.00</TableCell>
+</TableRow>
+</TableFooter> */}
       </Table>
     </div>
   );
 };
 
-export default page;
+export default OrderTable;

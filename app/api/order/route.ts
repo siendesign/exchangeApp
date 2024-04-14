@@ -46,4 +46,22 @@ export async function POST(req: NextRequest) {
   );
 }
 
-export async function GET(req: NextRequest) {}
+export async function GET(req: NextRequest) {
+
+  const AllOrders = await Orders.find({})
+  return NextResponse.json(
+    AllOrders,
+    { status: 200 }
+  );
+}
+
+export async function PUT(req: NextRequest){
+  const {id, status} = await req.json();
+
+  console.table(id, status);
+  
+  return NextResponse.json(
+    { message: "sending", body: status},
+    { status: 200 }
+  );
+}
