@@ -26,4 +26,8 @@ export const getCurrencyPairs = async (from: string) => {
     .then((res) => res.data);
 };
 
-// 🇳🇬 NGN
+export const fetctAllCurrencyPairs = async () => {
+  return await axios
+   .get<CurrencyPairType[]>("/api/currency-pairs")
+   .then((res) => res.data);
+};

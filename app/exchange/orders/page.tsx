@@ -28,6 +28,7 @@ const page = () => {
   const { toast } = useToast();
 
   const [orders, setOrders] = useState<any | null>();
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleCopyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -61,7 +62,9 @@ const page = () => {
     }
   }, [session]);
 
+  
   return (
+    
     <div>
       <Table>
         <TableCaption>

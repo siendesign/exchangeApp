@@ -24,6 +24,7 @@ import { updateOrderStatus } from "@/lib/action";
 const OrderTable = () => {
   const { data: session } = useSession();
   const [orders, setOrders] = useState<any | null>();
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleUpdateStatus = async (id: any, value: string) => {
     const update = await updateOrderStatus(id, value);
@@ -44,9 +45,18 @@ const OrderTable = () => {
         setOrders(userorders);
 
         console.log(userorders);
+        setIsLoading(false);
       }, 5000);
     }
   }, [session]);
+
+  if (isLoading) {
+    return (
+      <div className={"w-full h-96 flex justify-center items-center "}>
+        <div className="loader"></div>
+      </div>
+    );
+  }
   return (
     <div>
       <Table>

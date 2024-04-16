@@ -14,6 +14,7 @@ import OrderTable from "./components/OrderTable";
 import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
 import { UserNav } from "./components/user-nav";
+import CurrencyTable from "./components/CurrencyTable";
 
 const page = async () => {
   // const currencies = await getAllcurrencies();
@@ -44,7 +45,7 @@ const page = async () => {
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
-              <TabsTrigger value="reports">Reports</TabsTrigger>
+              <TabsTrigger value="rates">Rates</TabsTrigger>
               <TabsTrigger value="notifications" disabled>
                 Notifications
               </TabsTrigger>
@@ -176,10 +177,13 @@ const page = async () => {
               </div>
             </TabsContent>
             <TabsContent value="orders" className="space-y-4">
-              <div className="">Orders</div>
               <div className="">
                 <OrderTable />
-                
+              </div>
+            </TabsContent>
+            <TabsContent value="rates" className="space-y-4">
+              <div className="">
+                <CurrencyTable />
               </div>
             </TabsContent>
           </Tabs>
