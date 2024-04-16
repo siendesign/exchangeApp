@@ -41,7 +41,7 @@ const CurrencyTable = () => {
 
   if(isLoading){
     return <div
-    className={"w-full h-96 flex justify-center items-center "}
+    className={"w-full h-96 flex justify-center items-end "}
   >
     <div className="loader"></div>
   </div>

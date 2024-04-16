@@ -1,3 +1,4 @@
+"use client";
 import {
   Card,
   CardContent,
@@ -15,10 +16,35 @@ import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
 import { UserNav } from "./components/user-nav";
 import CurrencyTable from "./components/CurrencyTable";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { useEffect, useState } from "react";
 
-const page = async () => {
+const page = () => {
   // const currencies = await getAllcurrencies();
   // const pairs = await fetchAllCurrencyPairs();
+
+  const [currentTab, setCurrentTab] = useState<string | undefined>("");
+
+  const handleTabChange = (value:string) =>{
+    setCurrentTab(value);
+    localStorage.setItem("currentTab", value)
+  }
+  
+  useEffect(() => {
+    let tab = localStorage.getItem("currentTab") || "overview";
+    setCurrentTab(tab);
+  }, []);
 
   return (
     <>
@@ -41,7 +67,7 @@ const page = async () => {
               <Button>Download</Button> */}
             </div>
           </div>
-          <Tabs defaultValue="overview" className="space-y-4">
+          <Tabs value={currentTab} onValueChange={handleTabChange} className="space-y-4">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
@@ -183,6 +209,47 @@ const page = async () => {
             </TabsContent>
             <TabsContent value="rates" className="space-y-4">
               <div className="">
+                <div className="w-full flex justify-end">
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button variant="outline">New Pair</Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>New Currency Pair</DialogTitle>
+                        <DialogDescription>
+                          Add new currency pairs here or create a currency.
+                          Click save when you're done.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="name" className="text-right">
+                            Name
+                          </Label>
+                          <Input
+                            id="name"
+                            value="Pedro Duarte"
+                            className="col-span-3"
+                          />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                          <Label htmlFor="username" className="text-right">
+                            Username
+                          </Label>
+                          <Input
+                            id="username"
+                            value="@peduarte"
+                            className="col-span-3"
+                          />
+                        </div>
+                      </div>
+                      <DialogFooter>
+                        <Button type="submit">Save changes</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
                 <CurrencyTable />
               </div>
             </TabsContent>

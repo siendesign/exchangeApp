@@ -52,7 +52,7 @@ const OrderTable = () => {
 
   if (isLoading) {
     return (
-      <div className={"w-full h-96 flex justify-center items-center "}>
+      <div className={"w-full h-96 flex justify-center items-end "}>
         <div className="loader"></div>
       </div>
     );
