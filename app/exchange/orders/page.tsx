@@ -52,12 +52,11 @@ const page = () => {
       let i = 0;
       setInterval(async () => {
         console.log(i++);
-        // const response = await fetch(`/api/order/itoro@gmail.com`)
         const response = await fetch(`/api/order/${session?.user?.email!}`);
         const userorders = await response.json();
         setOrders(userorders);
-
-        console.log(userorders);
+        setIsLoading(false);
+        // console.log(userorders);
       }, 5000);
     }
   }, [session]);

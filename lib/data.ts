@@ -14,7 +14,7 @@ export const getAllcurrencies = async () =>{
    
     db.connect();
     const currencies = await Currency.find({});
-    return currencies
+    return JSON.parse(JSON.stringify(currencies));
 }
 
 export const getCurrencyPair = async (fromCurrency:string) => {

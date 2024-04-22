@@ -53,7 +53,9 @@ const OrderTable = () => {
   if (isLoading) {
     return (
       <div className={"w-full h-96 flex justify-center items-end "}>
-        <div className="loader"></div>
+        <div className="flex gap-3 items-center">
+          <div className="loader"></div> Loading...
+        </div>
       </div>
     );
   }

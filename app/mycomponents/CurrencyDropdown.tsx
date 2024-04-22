@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { getAllCurrencies } from "@/lib/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 interface Props {
   setFrom: React.Dispatch<React.SetStateAction<string>>;
@@ -29,6 +30,7 @@ const CurrencyDropdown = ({
   setToAmount,
   setFromAmount,
 }: Props) => {
+  const [cdata, setCdata] = useState<any[] | undefined>();
   const queryClient = useQueryClient();
 
   const { data, isLoading, isFetching } = useQuery({
@@ -45,12 +47,18 @@ const CurrencyDropdown = ({
     setFromAmount(0);
     // console.log(value);
 
-    // console.log(data);
+    console.log(data);
 
     let obj = data?.find((o) => o.abbrev === value);
     setFromSymbol(obj?.symbol!);
     console.log(obj?.symbol);
   };
+
+  useEffect(() => {
+    if (data) {
+      setCdata(data);
+    }
+  }, [data]);
 
   if (isLoading) {
     return <div className="my-4">Loading...</div>;
@@ -65,11 +73,12 @@ const CurrencyDropdown = ({
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Currencies</SelectLabel>
-            {data?.map((currency) => (
-              <SelectItem key={currency._id} value={currency.abbrev}>
-                {currency.abbrev}
-              </SelectItem>
-            ))}
+            {cdata &&
+              cdata?.map((currency) => (
+                <SelectItem key={currency._id} value={currency.abbrev}>
+                  {currency.abbrev}
+                </SelectItem>
+              ))}
           </SelectGroup>
         </SelectContent>
       </Select>

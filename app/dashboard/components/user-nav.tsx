@@ -16,6 +16,11 @@ import { useSession } from "next-auth/react";
 
 export function UserNav() {
   const { data: session } = useSession();
+
+  const handleSignOut = () =>{
+    localStorage.removeItem("currentTab");
+    signOut()
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -52,7 +57,7 @@ export function UserNav() {
           <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup> */}
         {/* <DropdownMenuSeparator /> */}
-        <DropdownMenuItem onClick={()=>signOut()}>
+        <DropdownMenuItem onClick={()=>handleSignOut()}>
           Log out
           {/* <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut> */}
         </DropdownMenuItem>

@@ -1,5 +1,32 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -8,46 +35,202 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { CopyIcon } from "@radix-ui/react-icons";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetctAllCurrencyPairs } from "@/lib/api";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { addCurrencyConvertionRate } from "@/lib/action";
+import { getAllcurrencies } from "@/lib/data";
+import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 const CurrencyTable = () => {
-  const [loader, setLoader] = useState(true);
-  const queryClient = useQueryClient();
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["currency-pairs"],
-    queryFn: fetctAllCurrencyPairs,
-  });
+  const { toast } = useToast()
 
-  console.log(data);
+  const [loader, setLoader] = useState(true);
+  const [dialogOpened, setDialogOpened] = useState(false);
+  const [data, setData] = useState<any[] | undefined>();
+  const [allcurrencies, setAllcurrencies] = useState<any[] | undefined>();
+  const [newFormValue, setNewFormValue] = useState<string>();
+  const [newToValue, setNewToValue] = useState<string>();
+  const [newRateValue, setNewRateValue] = useState<number | undefined>();
+
+
+  const allCurrencies = async () => {
+    const currencies = await getAllcurrencies();
+    setAllcurrencies(currencies);
+    // console.log(currencies);
+    return currencies;
+  };
+
+  const handleChangeNewFromValue = (value: string) => {
+    // console.log(value);
+    setNewFormValue(value);
+  };
+
+  const handleChangeNewToValue = (value: string) => {
+    // console.log(value);
+    setNewToValue(value);
+  };
+
+  const handleFetchCurrencyPairs = async () => {
+    const response = await fetch(`/api/currency-pairs`);
+    const currencyPairs = await response.json();
+    setData(currencyPairs.data);
+    setLoader(false);
+  };
+
+  const handleAddNewCurrencyPairs = async (
+    from: string,
+    to: string,
+    rate: any
+  ) => {
+    const formData = new FormData();
+    formData.append("from", from);
+    formData.append("to", to);
+    formData.append("rate", rate);
+
+    console.log(formData);
+
+    const addRate = addCurrencyConvertionRate(formData);
+
+    addRate.then((res) => {
+      console.log(res);
+
+      
+      handleFetchCurrencyPairs();
+      setDialogOpened(!dialogOpened);
+      setNewFormValue("");
+      setNewToValue("");
+      setNewRateValue(undefined);
+
+      if (res == false) {
+        return  toast({
+          variant: "destructive",
+          // title: "Uh oh! Something went wrong.",
+          description: "Currency Pair already exists.",
+          // action: <ToastAction altText="Try again">Try again</ToastAction>,
+        })
+      }
+      toast({
+        description: "Currency pair added successfully.",
+      })
+    });
+  };
+
+  // console.log(data);
 
   useEffect(() => {
-    if (data) {
-      setLoader(false);
-    }
-  }, [data]);
+    handleFetchCurrencyPairs();
+    allCurrencies();
+  }, []);
 
-  if(isLoading){
-    return <div
-    className={"w-full h-96 flex justify-center items-end "}
-  >
-    <div className="loader"></div>
-  </div>
+  if (loader) {
+    return (
+      <div className={"w-full h-96 flex justify-center items-end "}>
+        <div className="flex gap-3 items-center">
+          <div className="loader"></div> Loading...
+        </div>
+      </div>
+    );
   }
+
   return (
     <div>
+      <Button variant="outline" onClick={() => setDialogOpened(!dialogOpened)}>
+        New Pair
+      </Button>
+      <Dialog open={dialogOpened} >
+        {/* <DialogTrigger asChild>
+        </DialogTrigger> */}
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>New Currency Pair</DialogTitle>
+            <DialogDescription>
+              Add new currency pairs here or create a currency. Click save when
+              you're done.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                From
+              </Label>
+              <Select
+                value={newFormValue}
+                onValueChange={handleChangeNewFromValue}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Currencies</SelectLabel>
+                    {allcurrencies &&
+                      allcurrencies.map((currency) => (
+                        <SelectItem key={currency._id} value={currency.abbrev}>
+                          {currency.abbrev}
+                        </SelectItem>
+                      ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                To
+              </Label>
+              <Select value={newToValue} onValueChange={handleChangeNewToValue}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Currencies</SelectLabel>
+                    {allcurrencies &&
+                      allcurrencies.map((currency) => (
+                        <SelectItem key={currency._id} value={currency.abbrev}>
+                          {currency.abbrev}
+                        </SelectItem>
+                      ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="username" className="text-right">
+                Rate
+              </Label>
+              <Input
+                className="w-[180px]"
+                placeholder="0.00"
+                type="number"
+                value={newRateValue || ''}
+                onChange={(e: any) => setNewRateValue(e.currentTarget.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex ">
+            <div className="w-full flex justify-between">
+              <Button
+                variant={"ghost"}
+                type="submit"
+                onClick={() => setDialogOpened(!dialogOpened)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                onClick={() =>
+                  handleAddNewCurrencyPairs(
+                    newFormValue!,
+                    newToValue!,
+                    newRateValue!
+                  )
+                }
+              >
+                Add
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Table>
         {/* <TableCaption>
   A list of your recent orders.{session?.user?.email!}
@@ -124,7 +307,6 @@ const CurrencyTable = () => {
 </TableRow>
 </TableFooter> */}
       </Table>
-      
     </div>
   );
 };

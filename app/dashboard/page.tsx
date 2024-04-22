@@ -29,19 +29,44 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
+import { getAllcurrencies } from "@/lib/data";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { addCurrencyConvertionRate } from "@/lib/action";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const page = () => {
   // const currencies = await getAllcurrencies();
   // const pairs = await fetchAllCurrencyPairs();
-
+  const queryClient = useQueryClient();
   const [currentTab, setCurrentTab] = useState<string | undefined>("");
 
-  const handleTabChange = (value:string) =>{
+
+  const handleTabChange = (value: string) => {
     setCurrentTab(value);
-    localStorage.setItem("currentTab", value)
-  }
+    localStorage.setItem("currentTab", value);
+  };
+
+  // const allCurrencies = async () => {
+  //   const currencies = await getAllcurrencies();
+  //   setAllcurrencies(currencies);
+  //   console.log(currencies);
+
+  //   return currencies;
+  // };
+
   
+
   useEffect(() => {
+    // let currencies = allCurrencies();
+
     let tab = localStorage.getItem("currentTab") || "overview";
     setCurrentTab(tab);
   }, []);
@@ -67,14 +92,17 @@ const page = () => {
               <Button>Download</Button> */}
             </div>
           </div>
-          <Tabs value={currentTab} onValueChange={handleTabChange} className="space-y-4">
+          <Tabs
+            value={currentTab}
+            onValueChange={handleTabChange}
+            className="space-y-4"
+          >
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="rates">Rates</TabsTrigger>
-              <TabsTrigger value="notifications" disabled>
-                Notifications
-              </TabsTrigger>
+              <TabsTrigger value="currency">Currency</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -209,49 +237,17 @@ const page = () => {
             </TabsContent>
             <TabsContent value="rates" className="space-y-4">
               <div className="">
-                <div className="w-full flex justify-end">
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button variant="outline">New Pair</Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>New Currency Pair</DialogTitle>
-                        <DialogDescription>
-                          Add new currency pairs here or create a currency.
-                          Click save when you're done.
-                        </DialogDescription>
-                      </DialogHeader>
-                      <div className="grid gap-4 py-4">
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="name" className="text-right">
-                            Name
-                          </Label>
-                          <Input
-                            id="name"
-                            value="Pedro Duarte"
-                            className="col-span-3"
-                          />
-                        </div>
-                        <div className="grid grid-cols-4 items-center gap-4">
-                          <Label htmlFor="username" className="text-right">
-                            Username
-                          </Label>
-                          <Input
-                            id="username"
-                            value="@peduarte"
-                            className="col-span-3"
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button type="submit">Save changes</Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                <div className="w-full flex justify-end py-4">
+                  
                 </div>
                 <CurrencyTable />
               </div>
+            </TabsContent>
+            <TabsContent value="settings" className="space-y-4">
+              <div className="">jbiokjbds</div>
+            </TabsContent>
+            <TabsContent value="currency" className="space-y-4">
+              <div className="">jbiokjbds</div>
             </TabsContent>
           </Tabs>
         </div>

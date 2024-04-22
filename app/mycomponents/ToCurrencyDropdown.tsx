@@ -53,7 +53,7 @@ const ToCurrencyDropdown = ({ from, setRate, setToSymbol, setTo }: Props) => {
       <SelectContent>
         <SelectGroup>
           <SelectLabel>Currencies</SelectLabel>
-          {data?.map((currency) => (
+          {data && data?.map((currency) => (
             <SelectItem key={currency._id} value={currency.to}>
               {currency.to}
             </SelectItem>
