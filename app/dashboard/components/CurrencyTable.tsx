@@ -10,6 +10,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Drawer,
   DrawerClose,
   DrawerContent,
@@ -41,7 +52,7 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 
 const CurrencyTable = () => {
-  const { toast } = useToast()
+  const { toast } = useToast();
 
   const [loader, setLoader] = useState(true);
   const [dialogOpened, setDialogOpened] = useState(false);
@@ -50,7 +61,6 @@ const CurrencyTable = () => {
   const [newFormValue, setNewFormValue] = useState<string>();
   const [newToValue, setNewToValue] = useState<string>();
   const [newRateValue, setNewRateValue] = useState<number | undefined>();
-
 
   const allCurrencies = async () => {
     const currencies = await getAllcurrencies();
@@ -93,7 +103,6 @@ const CurrencyTable = () => {
     addRate.then((res) => {
       console.log(res);
 
-      
       handleFetchCurrencyPairs();
       setDialogOpened(!dialogOpened);
       setNewFormValue("");
@@ -101,16 +110,29 @@ const CurrencyTable = () => {
       setNewRateValue(undefined);
 
       if (res == false) {
-        return  toast({
+        return toast({
           variant: "destructive",
           // title: "Uh oh! Something went wrong.",
           description: "Currency Pair already exists.",
           // action: <ToastAction altText="Try again">Try again</ToastAction>,
-        })
+        });
       }
       toast({
         description: "Currency pair added successfully.",
-      })
+      });
+    });
+  };
+
+  const handleDeletePair = async (id: any) => {
+    console.log(id, " deleted");
+    const request = await fetch(`/api/currency-pairs/delete/${id}`, {
+      method: "DELETE",
+    });
+    const response = await request.json();
+    console.log(response);
+    handleFetchCurrencyPairs();
+    toast({
+      description: "Currency pair deleted successfully.",
     });
   };
 
@@ -136,7 +158,7 @@ const CurrencyTable = () => {
       <Button variant="outline" onClick={() => setDialogOpened(!dialogOpened)}>
         New Pair
       </Button>
-      <Dialog open={dialogOpened} >
+      <Dialog open={dialogOpened}>
         {/* <DialogTrigger asChild>
         </DialogTrigger> */}
         <DialogContent className="sm:max-w-[425px]">
@@ -201,7 +223,7 @@ const CurrencyTable = () => {
                 className="w-[180px]"
                 placeholder="0.00"
                 type="number"
-                value={newRateValue || ''}
+                value={newRateValue || ""}
                 onChange={(e: any) => setNewRateValue(e.currentTarget.value)}
               />
             </div>
@@ -292,6 +314,32 @@ const CurrencyTable = () => {
                               Cancel
                             </Button>
                           </DrawerClose>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button variant="destructive">Delete</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This data will
+                                  be removed permanently from our servers.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => handleDeletePair(data._id)}
+                                >
+                                  Continue
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          
+                          <Button>Update</Button>
                         </DrawerFooter>
                       </div>
                     </DrawerContent>
