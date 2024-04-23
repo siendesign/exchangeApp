@@ -61,8 +61,10 @@ const CurrencyTable = () => {
   const [newFormValue, setNewFormValue] = useState<string>();
   const [newToValue, setNewToValue] = useState<string>();
   const [newRateValue, setNewRateValue] = useState<number | undefined>();
+  const [updatedRate, setUpdatedRate] = useState<number | undefined>();
 
   const allCurrencies = async () => {
+
     const currencies = await getAllcurrencies();
     setAllcurrencies(currencies);
     // console.log(currencies);
@@ -136,6 +138,23 @@ const CurrencyTable = () => {
     });
   };
 
+  const handleUpdatePair = async (id: any) => {
+    console.log(id, " updated");
+
+    let data = {rate: updatedRate}
+    const request = await fetch(`/api/currency-pairs/update/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const response = await request.json();
+    console.log(response);
+    handleFetchCurrencyPairs();
+    toast({
+      description: "Currency pair updated successfully.",
+    });
+  };
+
   // console.log(data);
 
   useEffect(() => {
@@ -155,9 +174,9 @@ const CurrencyTable = () => {
 
   return (
     <div>
-      <Button variant="outline" onClick={() => setDialogOpened(!dialogOpened)}>
-        New Pair
-      </Button>
+      <div className="w-full flex justify-end pb-4">
+        <Button onClick={() => setDialogOpened(!dialogOpened)}>New Pair</Button>
+      </div>
       <Dialog open={dialogOpened}>
         {/* <DialogTrigger asChild>
         </DialogTrigger> */}
@@ -303,8 +322,9 @@ const CurrencyTable = () => {
                             <Input
                               type="text"
                               id="rate"
-                              placeholder="Rate"
-                              value={data.rate}
+                              placeholder={data.rate}
+                              value={updatedRate}
+                              onChange={(e:any)=>setUpdatedRate(e.currentTarget.value)}
                             />
                           </div>
                         </div>
@@ -338,8 +358,8 @@ const CurrencyTable = () => {
                               </AlertDialogFooter>
                             </AlertDialogContent>
                           </AlertDialog>
-                          
-                          <Button>Update</Button>
+
+                          <Button onClick={()=>handleUpdatePair(data._id)}>Update</Button>
                         </DrawerFooter>
                       </div>
                     </DrawerContent>
