@@ -41,13 +41,13 @@ import {
 } from "@/components/ui/select";
 import { addCurrencyConvertionRate } from "@/lib/action";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import CurrecyDataTable from "./components/CurrecyDataTable";
 
 const page = () => {
   // const currencies = await getAllcurrencies();
   // const pairs = await fetchAllCurrencyPairs();
   const queryClient = useQueryClient();
   const [currentTab, setCurrentTab] = useState<string | undefined>("");
-
 
   const handleTabChange = (value: string) => {
     setCurrentTab(value);
@@ -61,8 +61,6 @@ const page = () => {
 
   //   return currencies;
   // };
-
-  
 
   useEffect(() => {
     // let currencies = allCurrencies();
@@ -237,9 +235,7 @@ const page = () => {
             </TabsContent>
             <TabsContent value="rates" className="space-y-4">
               <div className="">
-                <div className="w-full flex justify-end py-4">
-                  
-                </div>
+                <div className="w-full flex justify-end py-4"></div>
                 <CurrencyTable />
               </div>
             </TabsContent>
@@ -247,7 +243,7 @@ const page = () => {
               <div className="">jbiokjbds</div>
             </TabsContent>
             <TabsContent value="currency" className="space-y-4">
-              <div className="">jbiokjbds</div>
+              <CurrecyDataTable />
             </TabsContent>
           </Tabs>
         </div>

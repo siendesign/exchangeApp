@@ -153,6 +153,7 @@ const CurrencyTable = () => {
     toast({
       description: "Currency pair updated successfully.",
     });
+    setUpdatedRate(undefined);
   };
 
   // console.log(data);
