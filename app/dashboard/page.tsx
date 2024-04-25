@@ -7,45 +7,17 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import {
-//   fetchAllCurrencyPairs,
-//   getAllcurrencies
-// } from "@/lib/data";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import CurrecyDataTable from "./components/CurrecyDataTable";
+import CurrencyTable from "./components/CurrencyTable";
 import OrderTable from "./components/OrderTable";
+import { MainNav } from "./components/main-nav";
 import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
 import { UserNav } from "./components/user-nav";
-import CurrencyTable from "./components/CurrencyTable";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
-import { getAllcurrencies } from "@/lib/data";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { addCurrencyConvertionRate } from "@/lib/action";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import CurrecyDataTable from "./components/CurrecyDataTable";
 
 const page = () => {
-  // const currencies = await getAllcurrencies();
-  // const pairs = await fetchAllCurrencyPairs();
   const queryClient = useQueryClient();
   const [currentTab, setCurrentTab] = useState<string | undefined>("");
 
@@ -54,17 +26,7 @@ const page = () => {
     localStorage.setItem("currentTab", value);
   };
 
-  // const allCurrencies = async () => {
-  //   const currencies = await getAllcurrencies();
-  //   setAllcurrencies(currencies);
-  //   console.log(currencies);
-
-  //   return currencies;
-  // };
-
   useEffect(() => {
-    // let currencies = allCurrencies();
-
     let tab = localStorage.getItem("currentTab") || "overview";
     setCurrentTab(tab);
   }, []);
@@ -75,7 +37,7 @@ const page = () => {
         <div className="border-b">
           <div className="flex h-16 items-center px-4">
             {/* <TeamSwitcher /> */}
-            {/* <MainNav className="mx-6" /> */}
+            <MainNav className="mx-6" />
             <div className="ml-auto flex items-center space-x-4">
               {/* <Search /> */}
               <UserNav />
@@ -100,7 +62,7 @@ const page = () => {
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="rates">Rates</TabsTrigger>
               <TabsTrigger value="currency">Currency</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
+              {/* <TabsTrigger value="settings">Settings</TabsTrigger> */}
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -239,12 +201,12 @@ const page = () => {
                 <CurrencyTable />
               </div>
             </TabsContent>
-            <TabsContent value="settings" className="space-y-4">
-              <div className="">jbiokjbds</div>
-            </TabsContent>
             <TabsContent value="currency" className="space-y-4">
               <CurrecyDataTable />
             </TabsContent>
+            {/* <TabsContent value="settings" className="space-y-4">
+              <AdminSetting/>
+            </TabsContent> */}
           </Tabs>
         </div>
       </div>

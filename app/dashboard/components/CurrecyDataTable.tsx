@@ -97,7 +97,7 @@ const CurrecyDataTable = () => {
       });
     });
   };
-
+ 
   const handleDeleteCurrency = async (id: any) => {
     console.log(id, " deleted");
     const request = await fetch(`/api/currencies/delete/${id}`, {
