@@ -6,5 +6,6 @@ export const config = {
     "/dashboard",
     "/exchange/orders",
     "/dashboard/settings",
+    "/dashboard/settings/account"
   ],
 };
