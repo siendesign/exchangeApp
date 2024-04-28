@@ -14,9 +14,9 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 interface Props {
-  setFrom: React.Dispatch<React.SetStateAction<string>>;
-  setToAmount: React.Dispatch<React.SetStateAction<number>>;
-  setFromAmount: React.Dispatch<React.SetStateAction<number>>;
+  setFrom: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setToAmount: React.Dispatch<React.SetStateAction<number | undefined>>;
+  setFromAmount: React.Dispatch<React.SetStateAction<number | undefined>>;
   setFromSymbol: React.Dispatch<React.SetStateAction<string>>;
   setToSymbol: React.Dispatch<React.SetStateAction<string>>;
   setRate: React.Dispatch<React.SetStateAction<number>>;
@@ -38,20 +38,22 @@ const CurrencyDropdown = ({
     queryFn: getAllCurrencies,
   });
 
+
+
   const handleValue = (value: string) => {
     setFrom(value);
     queryClient.removeQueries({ queryKey: ["to-currency"], exact: true });
     setRate(0.0);
     setToSymbol("#");
-    setToAmount(0.0);
-    setFromAmount(0);
+    setToAmount(undefined);
+    setFromAmount(undefined);
     // console.log(value);
 
-    console.log(data);
+    // console.log(data);
 
     let obj = data?.find((o) => o.abbrev === value);
     setFromSymbol(obj?.symbol!);
-    console.log(obj?.symbol);
+    // console.log(obj?.symbol);
   };
 
   useEffect(() => {

@@ -12,16 +12,16 @@ import { getCurrencyPairs } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 interface Props {
-  from: string;
+  from: string | undefined;
   setRate: React.Dispatch<React.SetStateAction<number>>;
   setToSymbol: React.Dispatch<React.SetStateAction<string>>;
-  setTo: React.Dispatch<React.SetStateAction<string>>;
+  setTo: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const ToCurrencyDropdown = ({ from, setRate, setToSymbol, setTo }: Props) => {
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["to-currency"],
-    queryFn: () => getCurrencyPairs(from),
+    queryFn: () => getCurrencyPairs(from!),
     enabled: !!from,
   });
 

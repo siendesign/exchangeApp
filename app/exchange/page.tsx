@@ -23,7 +23,7 @@ const page = () => {
   };
 
 
-  console.log(session?.user?.email!);
+  // console.log(session?.user?.email!);
 
   useEffect(()=>{    
     if(session){

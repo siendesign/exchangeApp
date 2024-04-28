@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaCaretUp } from "react-icons/fa6";
 import CurrencyDropdown from "./CurrencyDropdown";
 import Orderdialogue from "./Orderdialogue";
@@ -21,24 +21,103 @@ import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { CopyIcon } from "@radix-ui/react-icons";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@radix-ui/react-dropdown-menu";
+import { IoIosWallet } from "react-icons/io";
+
+type Valuable<T> = {
+  [K in keyof T as T[K] extends null | undefined ? never : K]: T[K];
+};
+
+function filterValues<T extends {}, V = Valuable<T>>(obj: T): V {
+  return Object.fromEntries(
+    Object.entries(obj).filter(
+      ([, v]) =>
+        !(
+          (typeof v === "string" && !v.length) ||
+          v === null ||
+          typeof v === "undefined"
+        )
+    )
+  ) as V;
+}
 
 const CurrencyCalculator = () => {
   const router = useRouter();
+  const { toast } = useToast();
+
   const { data: session } = useSession();
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
+  const [from, setFrom] = useState<string | undefined>();
+  const [to, setTo] = useState<string | undefined>();
   const [rate, setRate] = useState(0.0);
-  const [fromAmount, setFromAmount] = useState(0.0);
+  const [fromAmount, setFromAmount] = useState<number | undefined>();
+  const [toAmount, setToAmount] = useState<number | undefined>();
   const [focus, setFocus] = useState("from");
-  const [toAmount, setToAmount] = useState(0.0);
   const [fromSymbol, setFromSymbol] = useState("#");
   const [toSymbol, setToSymbol] = useState("#");
+  const [cryptowalletAddress, setCryptowalletAddress] = useState<
+    string | undefined
+  >();
 
   //orderdata
   const [destinationAccountNumber, setDestinationAccountNumber] = useState("");
   const [destinationAccountName, setDestinationAccountName] = useState("");
   const [destinationBankName, setDestinationBankName] = useState("");
   const [destinationCountry, setDestinationCountry] = useState("");
+  const [cryptoCurrencyName, setCryptoCurrencyName] = useState<
+    string | undefined
+  >();
+  const [cryptoCurrencySymbol, setcryptoCurrencySymbol] = useState<
+    string | undefined
+  >();
+  const [tranferNetwork, setTranferNetworkl] = useState<string | undefined>();
+
+  //inputStates
+  const [disabled, setDisabled] = useState<boolean>(true);
+
+  //
+  const [wallets, setWalltes] = useState<any[] | undefined>();
+
+  const handleSelectMethod = (
+    address: string,
+    name: string,
+    symbol: string,
+    network: string
+  ) => {
+    console.log(address, name, symbol, network);
+    setCryptoCurrencyName(name);
+    setCryptowalletAddress(address);
+    setcryptoCurrencySymbol(symbol);
+    setTranferNetworkl(network);
+  };
+
+  const fetchWallets = async () => {
+    const request = await fetch(`/api/wallet`);
+    const response = await request.json();
+    console.log(response);
+    if (response.length > 0) {
+      setWalltes(response);
+    }
+  };
 
   const handleChangeToValue = (e: any) => {
     const num = e.target.value;
@@ -56,6 +135,14 @@ const CurrencyCalculator = () => {
       setToAmount(num);
       setFromAmount(parseFloat((rate * num).toFixed(2)));
     }
+
+    if (fromAmount !== undefined && toAmount !== undefined) {
+      setDisabled(false);
+    }
+
+    // if(fromAmount == 0 && toAmount == 0){
+    //   setDisabled(true);
+    // }
   };
 
   const getUserRole = async (email: string) => {
@@ -71,6 +158,7 @@ const CurrencyCalculator = () => {
 
   const handleCopyAddress = () => {
     const address = walletAddress.current;
+    navigator.clipboard.writeText(address.value);
     alert(`${address.value}`);
   };
 
@@ -93,19 +181,44 @@ const CurrencyCalculator = () => {
       fromSymbol,
     };
 
-    console.log(data);
+    // console.log(data);
+    console.log(Object.keys(data).length);
 
-    await fetch("api/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        router.push("/exchange/orders");
+    const dataValidation = filterValues(data);
+
+    console.log("valid:", Object.keys(dataValidation).length);
+
+    if (Object.keys(data).length != Object.keys(dataValidation).length) {
+      return toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Inlavid order. Enter all fields",
       });
+    }
+
+    if (fromAmount! > 0 || toAmount! > 0) {
+      await fetch("api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log(data);
+          router.push("/exchange/orders");
+        });
+    } else {
+      return toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "Inlavid order.",
+      });
+    }
   };
+
+  useEffect(() => {
+    fetchWallets();
+  }, []);
 
   if (session) {
     // alert(session?.user?.email)
@@ -136,7 +249,7 @@ const CurrencyCalculator = () => {
               <div className="col-span-10">
                 <input
                   type="number"
-                  className="w-full h-full"
+                  className="w-full h-full px-4 rounded-md"
                   placeholder="0.00"
                   value={fromAmount}
                   step="0.01"
@@ -144,6 +257,9 @@ const CurrencyCalculator = () => {
                     setFocus("from");
                   }}
                   onChange={handleChangeToValue}
+                  disabled={
+                    from === undefined || to === undefined ? true : false
+                  }
                 />
               </div>
             </div>
@@ -168,15 +284,17 @@ const CurrencyCalculator = () => {
               <div className="col-span-10">
                 <input
                   type="number"
-                  className="w-full"
+                  className="w-full px-4 rounded-md"
                   placeholder="0.00"
                   value={toAmount}
                   step="0.01"
                   onFocus={() => {
                     setFocus("to");
                   }}
-                  // onChange={(e) => setToAmount(+e.currentTarget.value)}
                   onChange={handleChangeToValue}
+                  disabled={
+                    fromAmount === undefined || to === undefined ? true : false
+                  }
                 />
               </div>
             </div>
@@ -190,11 +308,11 @@ const CurrencyCalculator = () => {
             <Drawer>
               <DrawerTrigger
                 className="border w-full h-full rounded-lg bg-black hover:bg-black/90 text-white"
-                disabled={false}
+                // disabled={disabled}
               >
                 Place an order
               </DrawerTrigger>
-              <DrawerContent className="h-[90vh]">
+              <DrawerContent className="h-fit">
                 <DrawerHeader>
                   <DrawerTitle>Create Order</DrawerTitle>
                   <DrawerDescription>
@@ -221,7 +339,8 @@ const CurrencyCalculator = () => {
                           <Input
                             ref={walletAddress}
                             id="link"
-                            defaultValue="mmdFAhC81X5YkwvqNdRy8Gmwd588vYwc4n"
+                            defaultValue={cryptowalletAddress}
+                            placeholder="cyptowallet address"
                             readOnly
                           />
                         </div>
@@ -239,6 +358,51 @@ const CurrencyCalculator = () => {
 
                     <div className="flex-grow flex items-start ">
                       <div className="flex w-full flex-col gap-5 justify-center items-center sm:items-start space-x-2 px-5 mt-5">
+                        <div className="grid w-full max-w-sm items-center gap-1.5">
+                          <Label htmlFor="email">Payment Method</Label>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="outline"
+                                className=" flex justify-between text-gray-500"
+                              >
+                                {" "}
+                                <div className="">
+                                  {cryptoCurrencyName
+                                    ? cryptoCurrencyName
+                                    : "Choose payment method"}
+                                </div>{" "}
+                                <IoIosWallet />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-[400px]">
+                              {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
+                              <DropdownMenuSeparator />
+                              {wallets &&
+                                wallets.map((wallet: any) => (
+                                  <DropdownMenuItem
+                                    key={wallet._id}
+                                    className="flex flex-col items-start gap-1"
+                                    onClick={() =>
+                                      handleSelectMethod(
+                                        wallet.cryptoCurrencyAddress,
+                                        wallet.cryptoCurrencyName,
+                                        wallet.cryptoCurrencySymbol,
+                                        wallet.tranferNetwork
+                                      )
+                                    }
+                                  >
+                                    <div className="font-bold">
+                                      {wallet.cryptoCurrencyName}
+                                    </div>
+                                    <div className="text-sm text-gray-400">
+                                      {wallet.cryptoCurrencyAddress}
+                                    </div>
+                                  </DropdownMenuItem>
+                                ))}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                         <div className="grid w-full max-w-sm items-center gap-1.5">
                           <Label htmlFor="email">
                             Destination Account Number
@@ -297,7 +461,9 @@ const CurrencyCalculator = () => {
                     place Order
                   </Button>
                   <DrawerClose>
-                    <Button variant="outline">Cancel</Button>
+                    <Button variant="outline" className="w-full ">
+                      Cancel
+                    </Button>
                   </DrawerClose>
                 </DrawerFooter>
               </DrawerContent>
