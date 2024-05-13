@@ -16,6 +16,7 @@ const OrderSchema = new mongoose.Schema(
     fromAmount: { type: Number },
     toAmount: { type: Number },
     rate: { type: String },
+    valdationImagePath: { type: String }, 
   },
   { timestamps: true }
 );

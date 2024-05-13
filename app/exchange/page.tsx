@@ -44,6 +44,7 @@ const page = () => {
   
   return (
     <>
+    
       <CurrencyCalculator />
       <div className="h-96 border flex justify-center items-center pr-4 pt-5 rounded-md">
         <Chart />

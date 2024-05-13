@@ -89,12 +89,27 @@ export function ProfileForm() {
   //     control: form.control,
   //   });
 
-  function onSubmit(data: ProfileFormValues) {
+  async function onSubmit(data: ProfileFormValues) {
+
+    const settingData = {
+      settingName:"notificationEmail",
+      value:data.notificationEmail
+    }
+
+    const request = await fetch(
+      `/api/settings`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settingData),
+      }
+    );
+
     toast({
       title: "You submitted the following values:",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(data.notificationEmail, null, 2)}</code>
         </pre>
       ),
     });

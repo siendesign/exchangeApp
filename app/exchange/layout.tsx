@@ -24,7 +24,7 @@ export default function Layout({
     firstLetter = Array.from(session?.user?.email!)[0];
   }
   return (
-    <main className="max-w-6xl mx-auto p-8 flex flex-col gap-10">
+    <main className="max-w-6xl mx-auto p-8 flex flex-col gap-10 h-screen">
       <div className="flex items-center justify-between">
         <h1 className="font-bold text-2xl">GuyExchange</h1>
 

@@ -20,6 +20,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { CopyIcon } from "@radix-ui/react-icons";
 import { updateOrderStatus } from "@/lib/action";
+import Link from "next/link";
+import { MdOutlineChatBubbleOutline } from "react-icons/md";
 
 const OrderTable = () => {
   const { data: session } = useSession();
@@ -42,7 +44,8 @@ const OrderTable = () => {
         // const response = await fetch(`/api/order/itoro@gmail.com`)
         const response = await fetch(`/api/order`);
         const userorders = await response.json();
-        setOrders(userorders);
+        const latest = userorders.reverse();
+        setOrders(latest);
 
         console.log(userorders);
         setIsLoading(false);
@@ -118,13 +121,20 @@ const OrderTable = () => {
                     <DrawerContent className="">
                       <div className="max-w-6xl mx-auto w-full ">
                         <div className="w-full p-7">
-                          <div className="mb-5">
-                            <h2 className="font-bold text-sm uppercase text-gray-500">
-                              Order {order._id}
-                            </h2>
-                            <div className="text-gray-400">
-                              Status: <span className="">{order.status}</span>{" "}
+                        <div className="mb-5 flex justify-between">
+                            <div className="">
+                              <h2 className="font-bold text-sm uppercase text-gray-500">
+                                Order {order._id}
+                              </h2>
+                              <div className="text-gray-400">
+                                Status: <span className="">{order.status}</span>{" "}
+                              </div>
                             </div>
+                            <Link href={`/dashboard/chat/${order._id}`}>
+                              <Button variant={"ghost"}>
+                                <MdOutlineChatBubbleOutline className="h-5 w-5" />
+                              </Button>
+                            </Link>
                           </div>
                           <hr />
                           <div className="flex flex-col sm:flex-row gap-5 py-4">
