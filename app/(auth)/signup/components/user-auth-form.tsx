@@ -59,7 +59,7 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
         role:"user"
       }),
     })
-      .then((response) => response.json())
+      .then((response) => response!.json())
       .then((data) => {
         if ("error" in data) {
           setIsLoading(false);

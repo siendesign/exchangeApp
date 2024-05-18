@@ -16,6 +16,7 @@ import { MainNav } from "./components/main-nav";
 import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
 import { UserNav } from "./components/user-nav";
+import UserTable from "./components/UserTable";
 
 const page = () => {
   const queryClient = useQueryClient();
@@ -62,7 +63,7 @@ const page = () => {
               <TabsTrigger value="orders">Orders</TabsTrigger>
               <TabsTrigger value="rates">Rates</TabsTrigger>
               <TabsTrigger value="currency">Currency</TabsTrigger>
-              {/* <TabsTrigger value="settings">Settings</TabsTrigger> */}
+              <TabsTrigger value="Users">Users</TabsTrigger>
             </TabsList>
             <TabsContent value="overview" className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -204,9 +205,10 @@ const page = () => {
             <TabsContent value="currency" className="space-y-4">
               <CurrecyDataTable />
             </TabsContent>
-            {/* <TabsContent value="settings" className="space-y-4">
-              <AdminSetting/>
-            </TabsContent> */}
+            <TabsContent value="Users" className="space-y-4">
+              {/* <AdminSetting/> */}
+              <UserTable />
+            </TabsContent>
           </Tabs>
         </div>
       </div>

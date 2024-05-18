@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
     email: email,
     password: hashedPassword,
     role: role,
+    status: "active",
   });
 
   await newUser.save();
