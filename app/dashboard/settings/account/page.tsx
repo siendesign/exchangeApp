@@ -36,26 +36,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-const accounts = [
-  {
-    cryptoCurrencyName: "USDT",
-    cryptoCurrencySymbol: "USDT",
-    cryptoCurrencyAddress: "0x0000000000000000000000000000000000000000",
-    tranferNetwork: "bnb",
-  },
-  {
-    cryptoCurrencyName: "Bitcoin",
-    cryptoCurrencySymbol: "BTC",
-    cryptoCurrencyAddress: "0x00000000000000000000000000000000000000007",
-    tranferNetwork: "BTC",
-  },
-  {
-    cryptoCurrencyName: "Ethereum",
-    cryptoCurrencySymbol: "ETH",
-    cryptoCurrencyAddress: "0x0000000000000000000000000000000000000000",
-    tranferNetwork: "ETH",
-  },
-];
+
 
 const page = () => {
   const { toast } = useToast();

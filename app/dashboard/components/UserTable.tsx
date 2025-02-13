@@ -23,29 +23,56 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { request } from "http";
 
-const people = [
-  {
-    name: "John Doe",
-    title: "Front-end Developer",
-    department: "Engineering",
-    email: "john@devui.com",
-    role: "user",
-    // image:
-    //   'https://images.unsplash.com/photo-1628157588553-5eeea00af15c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1160&q=80',
-  },
-  {
-    name: "Jane Doe",
-    title: "Back-end Developer",
-    department: "Engineering",
-    email: "jane@devui.com",
-    role: "admin",
-    image:
-      "https://images.unsplash.com/photo-1639149888905-fb39731f2e6c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=928&q=80",
-  },
-];
-
 const UserTable = () => {
   const [users, setUsers] = useState<any[] | undefined>();
+
+  const handleSuspendUser = async (id: any) => {
+    try {
+      const request = await fetch(`/api/user/suspend/${id}`, { method: "PUT" });
+      const response = await request.json();
+      console.log(response);
+      handleGetUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleActivateUser = async (id: any) => {
+    try {
+      const request = await fetch(`/api/user/activate/${id}`, {
+        method: "PUT",
+      });
+      const response = await request.json();
+      console.log(response);
+      handleGetUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleUpgradeUser = async (id: any) => {
+    try {
+      const request = await fetch(`/api/user/upgrade/${id}`, {
+        method: "PUT",
+      });
+      const response = await request.json();
+      console.log(response);
+      handleGetUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleDeleteUser = async (id: any) => {
+    try {
+      const request = await fetch(`/api/user/delete/${id}`, {
+        method: "DELETE",
+      });
+      const response = await request.json();
+      console.log(response);
+      handleGetUsers();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleGetUsers = async () => {
     try {
@@ -55,6 +82,21 @@ const UserTable = () => {
       return setUsers(response);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const displayStatus = (status: string) => {
+    switch (status) {
+      case "active":
+        return "text-green-800 bg-green-100";
+        break;
+      case "deleted":
+        return "text-red-800 bg-red-100";
+        break;
+
+      default:
+        return "text-gray-800 bg-gray-100";
+        break;
     }
   };
 
@@ -99,12 +141,12 @@ const UserTable = () => {
                       >
                         <span>User</span>
                       </th>
-                      {/* <th
+                      <th
                         scope="col"
                         className="px-12 py-3.5 text-left text-sm font-normal text-gray-700"
                       >
-                        Title
-                      </th> */}
+                        ID
+                      </th>
                       <th
                         scope="col"
                         className="px-4 py-3.5 text-left text-sm font-normal text-gray-700"
@@ -124,81 +166,115 @@ const UserTable = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {users && users.map((person) => {
-                      const name = person.email.split("@")[0];
-                      return (
-                        <tr key={person._id}>
-                          <td className="whitespace-nowrap px-4 py-4">
-                            <div className="flex items-center">
-                              <div className="h-10 w-10 flex-shrink-0">
-                                <Avatar>
-                                  {/* <AvatarImage
+                    {users &&
+                      users.map((person) => {
+                        const name = person.email.split("@")[0];
+                        return (
+                          <tr key={person._id}>
+                            <td className="whitespace-nowrap px-4 py-4">
+                              <div className="flex items-center">
+                                <div className="h-10 w-10 flex-shrink-0">
+                                  <Avatar>
+                                    {/* <AvatarImage
                                   src="https://github.com/shadcn.png"
                                   alt="@shadcn"
                                 /> */}
-                                  <AvatarFallback>
-                                    <UserRound size={24} />
-                                  </AvatarFallback>
-                                </Avatar>
-                              </div>
-                              <div className="ml-4">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {name}
+                                    <AvatarFallback>
+                                      <UserRound size={24} />
+                                    </AvatarFallback>
+                                  </Avatar>
                                 </div>
-                                <div className="text-sm text-gray-700">
-                                  {person.email}
+                                <div className="ml-4">
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {name}
+                                  </div>
+                                  <div className="text-sm text-gray-700">
+                                    {person.email}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </td>
-                          {/* <td className="whitespace-nowrap px-12 py-4">
-                          <div className="text-sm text-gray-900 ">
-                            {person.title}
-                          </div>
-                          <div className="text-sm text-gray-700">
-                            {person.department}
-                          </div>
-                        </td> */}
-                          <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
-                            {person.role}
-                          </td>
-                          <td className="whitespace-nowrap px-4 py-4">
-                            <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                              Active
-                            </span>
-                          </td>
+                            </td>
+                            <td className="whitespace-nowrap px-12 py-4">
+                              <div className="text-sm text-gray-400 ">
+                                {person._id}
+                              </div>
+                            </td>
+                            <td className="whitespace-nowrap px-4 py-4 text-sm text-gray-700">
+                              {person.role}
+                            </td>
+                            <td className="whitespace-nowrap px-4 py-4">
+                              <span
+                                className={
+                                  "inline-flex rounded-full  px-2 text-xs font-semibold leading-5 " +
+                                  displayStatus(person.status)
+                                }
+                              >
+                                {person.status}
+                              </span>
+                            </td>
 
-                          <td className="whitespace-nowrap px-4 py-4 text-center text-sm font-medium">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger>
-                                <Ellipsis />
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent>
-                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <Separator />
-                                <DropdownMenuItem className="flex gap-2">
-                                  <UserRoundCheck size={16} />
-                                  <div className="">Activate</div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="flex gap-2">
-                                  <UserRoundMinus size={16} />
-                                  <div className="">Suspend</div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="flex gap-2">
-                                  <UserRoundX size={16} />
-                                  <div className="">Delete</div>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="flex gap-2">
-                                  <UserRoundCog size={16} />
-                                  <div className="">Admin</div>
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                            <td className="whitespace-nowrap px-4 py-4 text-center text-sm font-medium">
+                              <DropdownMenu>
+                                <DropdownMenuTrigger>
+                                  <Ellipsis />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                  <DropdownMenuSeparator />
+                                  <Separator />
+                                  {person.status === "active" && (
+                                    <DropdownMenuItem
+                                      className="flex gap-2"
+                                      onClick={() =>
+                                        handleSuspendUser(person._id)
+                                      }
+                                    >
+                                      <UserRoundMinus size={16} />
+                                      <div className="">Suspend</div>
+                                    </DropdownMenuItem>
+                                  )}
+                                  {(person.status === "suspended" ||
+                                    person.status == "deleted") && (
+                                    <DropdownMenuItem
+                                      className="flex gap-2"
+                                      onClick={() =>
+                                        handleActivateUser(person._id)
+                                      }
+                                    >
+                                      <UserRoundCheck size={16} />
+                                      <div className="">Activate</div>
+                                    </DropdownMenuItem>
+                                  )}
+                                  {person.status != "deleted" && (
+                                    <DropdownMenuItem
+                                      className="flex gap-2"
+                                      onClick={() =>
+                                        handleDeleteUser(person._id)
+                                      }
+                                    >
+                                      <UserRoundX size={16} />
+                                      <div className="">Delete</div>
+                                    </DropdownMenuItem>
+                                  )}
+
+                                  {person.role !== "admin" &&
+                                    person.status !== "deleted" && (
+                                      <DropdownMenuItem
+                                        className="flex gap-2"
+                                        onClick={() =>
+                                          handleUpgradeUser(person._id)
+                                        }
+                                      >
+                                        <UserRoundCog size={16} />
+                                        <div className="">Admin</div>
+                                      </DropdownMenuItem>
+                                    )}
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </td>
+                          </tr>
+                        );
+                      })}
                   </tbody>
                 </table>
               </div>

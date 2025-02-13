@@ -25,8 +25,12 @@ const authOptions: NextAuthOptions = {
 
           console.log({ ...user, password: null, role: user.role });
 
+          if (user.status  === "suspended") return null;
+          if (user.status  === "deleted") return null;
+          
           if (validPassword) return { ...user, password: null, role: user.role };
         }
+
 
         return null;
       },

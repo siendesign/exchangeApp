@@ -71,7 +71,7 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
         }
         setTimeout(() => {
           router.push("/login");
-        }, 2000);
+        }, 500);
       });
   };
 

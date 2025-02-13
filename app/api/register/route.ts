@@ -4,6 +4,8 @@ import Users from "@/models/usersmodel";
 import bcrypt from "bcrypt";
 import { sendMail } from "@/lib/mail";
 import Settings from "@/models/adminSettingsModel";
+import UserCount from "@/models/userCountModel";
+import moment from "moment";
 
 export async function POST(req: NextRequest) {
   db.connect();
@@ -43,8 +45,7 @@ export async function POST(req: NextRequest) {
 
   const title = "New User Added";
   const message = "Hello Boss. We have a new Registered User!";
-  
-  
+
   await sendMail({
     to: AdminEmail.value,
     name: "",
@@ -219,12 +220,13 @@ export async function POST(req: NextRequest) {
     </tr></table>
     </td></tr><tr><td><div class="t20" style="mso-line-height-rule:exactly;mso-line-height-alt:45px;line-height:45px;font-size:1px;display:block;">&nbsp;</div></td></tr></table></td></tr></table></div></body>
     </html>`,
-  }).then(res=>{
+  }).then((res) => {
     console.log("notifiying Admin of signup");
   });
 
-  const userTitle = "Congratulations on Sign up"
-  const userMessage = "GuyExchange would like to congratulate you for joining our plafrom. We are here to meet your money exchange need reliably and on time :)"
+  const userTitle = "Congratulations on Sign up";
+  const userMessage =
+    "GuyExchange would like to congratulate you for joining our plafrom. We are here to meet your money exchange need reliably and on time :)";
 
   await sendMail({
     to: email,
@@ -400,7 +402,59 @@ export async function POST(req: NextRequest) {
     </tr></table>
     </td></tr><tr><td><div class="t20" style="mso-line-height-rule:exactly;mso-line-height-alt:45px;line-height:45px;font-size:1px;display:block;">&nbsp;</div></td></tr></table></td></tr></table></div></body>
     </html>`,
-  }).then(res=>console.log("email sent to new user"));
+  }).then((res) => console.log("email sent to new user"));
+
+  // analytic Records
+
+  const percentage = (last: number = 1, present: number) => {
+    let  prev = (last==0)? 1: last;
+    const percentage = ((present - prev) / prev) * 100;
+    return Number(percentage);
+  };
+
+  const users = await Users.find({ status: { $ne: "deleted" } });
+  const usersCount = users.length;
+  const date = moment().format("MMM Do YY");
+  const month = date.split(" ")[0];
+  const year = date.split(" ")[2];
+  console.log(month, "-" + usersCount, "-" + year);
+
+  const userCountTableData = await UserCount.find();
+
+  console.log(userCountTableData);
+
+  const newMonthData = {
+    month: month,
+    year: year,
+    total: usersCount,
+    percentage: percentage(
+      Number(userCountTableData.length),
+      Number(usersCount)
+    ),
+  };
+
+  console.log("final data:", newMonthData);
+
+  if (userCountTableData === null || userCountTableData.length === 0) {
+    const newMonth = new UserCount(newMonthData);
+    await newMonth.save();
+  } else {
+    const lastMonthData = userCountTableData[userCountTableData.length - 1];
+    console.log(
+      `last mounth ${lastMonthData.month},and this month ${newMonthData.month}`
+    );
+
+    if (lastMonthData.month === newMonthData.month) {
+      console.log("same month id:" + lastMonthData._id);
+      const updateMonth = await UserCount.findByIdAndUpdate(lastMonthData._id, {
+        total: Number(lastMonthData.total) + 1,
+        percentage: Number(newMonthData.percentage),
+      });
+    } else {
+      const newMonth = new UserCount(newMonthData);
+      await newMonth.save();
+    }
+  }
 
   return NextResponse.json({ email }, { status: 200 });
 }

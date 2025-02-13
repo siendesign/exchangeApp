@@ -21,15 +21,32 @@ import UserTable from "./components/UserTable";
 const page = () => {
   const queryClient = useQueryClient();
   const [currentTab, setCurrentTab] = useState<string | undefined>("");
+  const [userNumber, setUserNumber] = useState<number>(0);
+  const [userPercentage, setUserPercentage] = useState<number>(0);
+  const [totalOrders, setTotalOrders] = useState<number>(0);
+  const [totalOrdersPercentage, setTotalOrdersPercentage] = useState<number>(0);
+  const [activeOrders, setActiveOrders] = useState<number>(0);
+  const [activeOrdersPercentage, setActiveOrdersPercentage] =
+    useState<number>(0);
 
   const handleTabChange = (value: string) => {
     setCurrentTab(value);
     localStorage.setItem("currentTab", value);
   };
 
+  const fetchAnalyticData = async () => {
+    const request = await fetch("api/analytics");
+    const data = await request.json();
+    setUserNumber(data.userNumber);
+    setUserPercentage(data.userNumberPercentage);
+    setTotalOrders(data.totalOrders);
+    setActiveOrders(data.activeOrders);
+  };
+
   useEffect(() => {
     let tab = localStorage.getItem("currentTab") || "overview";
     setCurrentTab(tab);
+    fetchAnalyticData();
   }, []);
 
   return (
@@ -70,7 +87,7 @@ const page = () => {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Total Revenue
+                      Total Order Volume
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -94,9 +111,7 @@ const page = () => {
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">
-                      Subscriptions
-                    </CardTitle>
+                    <CardTitle className="text-sm font-medium">Users</CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -113,15 +128,17 @@ const page = () => {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+2350</div>
+                    <div className="text-2xl font-bold">{userNumber}</div>
                     <p className="text-xs text-muted-foreground">
-                      +180.1% from last month
+                      {userPercentage}% from last month
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Sales</CardTitle>
+                    <CardTitle className="text-sm font-medium">
+                      Total Orders
+                    </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -137,16 +154,16 @@ const page = () => {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+12,234</div>
+                    <div className="text-2xl font-bold">{totalOrders}</div>
                     <p className="text-xs text-muted-foreground">
-                      +19% from last month
+                      {totalOrdersPercentage}% from last month
                     </p>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Active Now
+                      Active Orders
                     </CardTitle>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -162,9 +179,9 @@ const page = () => {
                     </svg>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">+573</div>
+                    <div className="text-2xl font-bold">{activeOrders}</div>
                     <p className="text-xs text-muted-foreground">
-                      +201 since last hour
+                      {activeOrdersPercentage}% of orders
                     </p>
                   </CardContent>
                 </Card>
@@ -180,9 +197,9 @@ const page = () => {
                 </Card>
                 <Card className="col-span-3">
                   <CardHeader>
-                    <CardTitle>Recent Sales</CardTitle>
+                    <CardTitle>Recent Orders</CardTitle>
                     <CardDescription>
-                      You made 265 sales this month.
+                      You have {totalOrders} orders
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
