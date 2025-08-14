@@ -15,6 +15,15 @@ export async function sendMail({
 }) {
   const { SMTP_EMAIL, NODEMAILER_PW } = process.env;
 
+  // const transport = nodemailer.createTransport({
+  //   host: "mail.privatemail.com",
+  //   port: 465,
+  //   secure: false,
+  //   auth: {
+  //     user: "info@rayex.co",
+  //     pass: "Rayexchange25@",
+  //   },
+  // });
   const transport = nodemailer.createTransport({
     service: "gmail",
     host: "smtp.gmail.com",

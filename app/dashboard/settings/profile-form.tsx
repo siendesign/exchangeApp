@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "@/components/ui/use-toast";
+// import { toast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 
 const profileFormSchema = z.object({
@@ -105,25 +105,26 @@ export function ProfileForm() {
       }
     );
 
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data.notificationEmail, null, 2)}</code>
-        </pre>
-      ),
-    });
+    // toast({
+    //   title: "You submitted the following values:",
+    //   description: (
+    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+    //       <code className="text-white">{JSON.stringify(data.notificationEmail, null, 2)}</code>
+    //     </pre>
+    //   ),
+    // });
   }
 
   async function UpdatePassword(data: PasswordFormValues) {
     console.log(data);
 
     if (data.newPassword !== data.confirmNewPassword) {
-      return toast({
-        variant: "destructive",
-        title: "Invalid Password",
-        description: "New passwords don't match",
-      });
+      return
+      // return toast({
+      //   variant: "destructive",
+      //   title: "Invalid Password",
+      //   description: "New passwords don't match",
+      // });
     }
 
     const request = await fetch(
@@ -139,16 +140,20 @@ export function ProfileForm() {
 
     console.log(response);
     if (response !== "success") {
-      return toast({
-        variant:"destructive",
-        title: "Error",
-        description: "Password confirmation failed",
-      });
+      return console.log("not succeessful");
+      
+      // return toast({
+      //   variant:"destructive",
+      //   title: "Error",
+      //   description: "Password confirmation failed",
+      // });
     }
-    return toast({
-      title: "success",
-      description: "Password updated successfully",
-    });
+    return console.log("Password updated successfully!");
+    
+    // return toast({
+    //   title: "success",
+    //   description: "Password updated successfully",
+    // });
   }
 
   return (

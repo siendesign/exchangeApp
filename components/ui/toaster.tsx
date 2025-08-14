@@ -9,9 +9,19 @@ import {
   ToastViewport,
 } from "@/components/ui/toast"
 import { useToast } from "@/components/ui/use-toast"
+import { useEffect, useState } from "react";
 
 export function Toaster() {
-  const { toasts } = useToast()
+  const [mounted, setMounted] = useState(false);
+  const { toasts } = useToast();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <ToastProvider>

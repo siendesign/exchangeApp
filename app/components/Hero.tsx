@@ -26,7 +26,7 @@ export function TypewriterEffectSmoothDemo() {
       text: "with",
     },
     {
-      text: "Guy Exchange.",
+      text: "RayEx.",
       className: "text-blue-500 dark:text-blue-500",
     },
   ];
