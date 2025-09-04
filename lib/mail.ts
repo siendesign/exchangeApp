@@ -5,7 +5,7 @@ export async function sendMail({
   name,
   subject,
   body,
-  attachments
+  attachments,
 }: {
   to: string;
   name: string;
@@ -15,42 +15,40 @@ export async function sendMail({
 }) {
   const { SMTP_EMAIL, NODEMAILER_PW } = process.env;
 
-  // const transport = nodemailer.createTransport({
-  //   host: "mail.privatemail.com",
-  //   port: 465,
-  //   secure: false,
-  //   auth: {
-  //     user: "info@rayex.co",
-  //     pass: "Rayexchange25@",
-  //   },
-  // });
+  console.log({ to, name, subject, body });
+
   const transport = nodemailer.createTransport({
-    service: "gmail",
-    host: "smtp.gmail.com",
-    port: 587,
-    ignoreTLS: false,
-    secure: false,
+    host: "mail.privateemail.com",
+    port: 465,
+    secure: true,
     auth: {
-      user: SMTP_EMAIL,
-      pass: NODEMAILER_PW,
+      user: "info@rayex.co",
+      pass: "Rayexchange25@",
     },
+    connectionTimeout:60000,
+    greetingTimeout:30000,
+    socketTimeout:60000,
+    tls:{
+      rejectUnauthorized:false,
+      minVersion:'TLSv1'
+    },
+    debug:process.env.NODE_ENV === "development",
+    logger:process.env.NODE_ENV === "development",
+    ignoreTLS:false,
+    requireTLS: process.env.EMAIL_PORT === "587"
   });
+
   try {
     const testResult = await transport.verify();
     console.log(testResult);
-  } catch (error) {
-    console.log(error);
-    return;
-  }
-
-  try {
     const sendResult = await transport.sendMail({
-      from: SMTP_EMAIL,
+      from: "info@rayex.co",
       to: to,
       subject: subject,
       html: body,
     });
     console.log(sendResult);
+    return sendResult;
   } catch (error) {
     console.log(error);
   }
