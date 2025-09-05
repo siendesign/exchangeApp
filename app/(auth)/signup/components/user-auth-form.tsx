@@ -6,6 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { signUpWithEmailAndPassword } from "../../action";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -38,7 +39,7 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
         description:
           "There was a problem with your request. All credentials must be provided!",
       });
-    }
+    } 
 
     if (password !== confirmPassword) {
       setIsLoading(false);
@@ -50,29 +51,56 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
       });
     }
 
-    await fetch("api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-        role:"user"
-      }),
-    })
-      .then((response) => response!.json())
-      .then((data) => {
-        if ("error" in data) {
-          setIsLoading(false);
-          return toast({
-            variant: "destructive",
-            title: "Uh oh! Something went wrong.",
-            description: data.error,
-          });
-        }
-        setTimeout(() => {
-          router.push("/login");
-        }, 500);
+    // supabase signup with email
+
+    const result = await signUpWithEmailAndPassword({email:email, password:password, confirm:confirmPassword})
+  
+    console.log(result?.error);
+
+    if(result?.error){
+      setIsLoading(false);
+      setInfo({
+        email: "",
+        password: "",
+        confirmPassword: "",
+      })
+      return toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description:
+          result.error,
       });
+    }else{
+      console.log(result?.user);
+      
+    }
+    
+   
+    
+
+    // await fetch("api/register", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     email: email,
+    //     password: password,
+    //     role:"user"
+    //   }),
+    // })
+    //   .then((response) => response!.json())
+    //   .then((data) => {
+    //     if ("error" in data) {
+    //       setIsLoading(false);
+    //       return toast({
+    //         variant: "destructive",
+    //         title: "Uh oh! Something went wrong.",
+    //         description: data.error,
+    //       });
+    //     }
+    //     setTimeout(() => {
+    //       router.push("/login");
+    //     }, 500);
+    //   });
   };
 
   
