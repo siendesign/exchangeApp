@@ -10,10 +10,10 @@ import moment from "moment";
 export async function POST(req: NextRequest) {
   db.connect();
 
-  const { email, password, role } = await req.json();
-  const saltRounds = 10;
-  const salt = bcrypt.genSaltSync(saltRounds);
-  const hashedPassword = bcrypt.hashSync(password, salt);
+  const { uid, email, role } = await req.json();
+  // const saltRounds = 10;
+  // const salt = bcrypt.genSaltSync(saltRounds);
+  // const hashedPassword = bcrypt.hashSync(password, salt);
   const exists = await Users.find({ email: email });
 
   console.log(exists.length);
@@ -28,16 +28,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  console.log({ email, password, hashedPassword });
+  console.log({ email, uid, role });
 
   const newUser = new Users({
+    uid: uid,
     email: email,
-    password: hashedPassword,
+    password: "12345678",
     role: role,
     status: "active",
   });
 
-  await newUser.save();
+  const saveUser = await newUser.save();
 
   const AdminEmail = await Settings.findOne({
     settingName: "notificationEmail",
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
   const message = "Hello Boss. We have a new Registered User!";
 
   await sendMail({
-    to: AdminEmail.value,
+    to: "victoryessien01@gmail.com",
     name: "",
     subject: `New User Registered`,
     body: `<!--
@@ -407,7 +408,7 @@ export async function POST(req: NextRequest) {
   // analytic Records
 
   const percentage = (last: number = 1, present: number) => {
-    let  prev = (last==0)? 1: last;
+    let prev = last == 0 ? 1 : last;
     const percentage = ((present - prev) / prev) * 100;
     return Number(percentage);
   };
@@ -456,5 +457,7 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ email }, { status: 200 });
+  console.log(saveUser);
+
+  return NextResponse.json(saveUser, { status: 200 });
 }

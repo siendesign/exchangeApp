@@ -1,16 +1,67 @@
 "use client"
 import { Button } from '@/components/ui/button'
 import { sendMailTestAction } from '@/lib/action'
-import React, { useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
+import { useGetAuthUserQuery } from '@/state/api'
+import React, { useEffect, useState } from 'react'
 
 const page = () => {
+
   return (
     <div className='w-full h-screen' >
       <div className="max-w-lg mx-auto p-5 space-y-3">
         <h1 className="text-xl text-gray-600">Playground</h1>
         <hr />
         <TestMailSender></TestMailSender>
+        {/* <hr /> */}
+        {/* <SupabaseComponent/> */}
+        <hr />
+        <ReduxComponent/>
       </div>
+    </div>
+  )
+}
+
+const ReduxComponent = () =>{
+
+  const {data, isLoading} = useGetAuthUserQuery();
+
+  
+  if(isLoading) return (
+    <div className="">loading...</div>
+  )
+  
+  console.log(data);
+  return(
+    <div className="">
+      <h2 className="">Redux Data</h2>
+      <pre>
+
+      {JSON.stringify(data, null, 2)}
+      </pre>
+    </div>
+  )
+}
+
+const SupabaseComponent =  () =>{
+ 
+  const supabase = createClient();
+  const [data, setData] = useState<any>(null)
+  const getsessesion=async () =>{
+    const { data:userSession, error } =  await supabase.auth.getSession();
+    console.log(userSession)
+    setData(userSession);
+  }
+
+  useEffect(()=>{
+    getsessesion()
+  },[])
+
+  if (!data) return <div className=''>No Session</div>
+
+  return(
+    <div className="w-full">
+      <pre className='w-full'>{JSON.stringify(data, null, 1)}</pre>
     </div>
   )
 }

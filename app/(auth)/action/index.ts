@@ -18,14 +18,14 @@ export async function signUpWithEmailAndPassword(data: {
       },
     });
 
-    const {error, data:userdata} = result
+    const { error, data: userdata } = result;
 
     if (error === null) {
       console.log(result);
       return { user: userdata, error: null };
     } else {
       console.error(result.error);
-       return { user: null, error: error.message };
+      return { user: null, error: error.message };
     }
   } catch (error) {
     console.log(error);
@@ -34,5 +34,20 @@ export async function signUpWithEmailAndPassword(data: {
 export async function signInWithEmailAndPassword(data: {
   email: string;
   password: string;
-  confirm: string;
-}) {}
+}) {
+  const { email, password } = data;
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+
+    if (error === null) {
+      return { user: data, error: null };
+    } else {
+      console.error(error);
+      return { user: null, error: error.message };
+    }
+  } catch (error) {}
+}

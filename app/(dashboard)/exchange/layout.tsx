@@ -9,8 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSession } from "next-auth/react";
-import { signOut } from "next-auth/react";
+
 import Link from "next/link";
 
 export default function Layout({
@@ -18,11 +17,8 @@ export default function Layout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { data: session } = useSession();
-  let firstLetter;
-  if (session) {
-    firstLetter = Array.from(session?.user?.email!)[0];
-  }
+
+  
   return (
     <main className="max-w-6xl mx-auto p-8 flex flex-col gap-10 h-screen">
       <div className="flex items-center justify-between">
@@ -42,7 +38,7 @@ export default function Layout({
             >
               orders
             </Link>
-            <Button className="mx-2" onClick={() => signOut()}>
+            <Button className="mx-2" onClick={() => {}}>
               {" "}
               signout
             </Button>
@@ -56,7 +52,7 @@ export default function Layout({
                     alt="@shadcn"
                   />
                   <AvatarFallback className="uppercase">
-                    {firstLetter}
+                    {/* {firstLetter} */}
                   </AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
@@ -81,7 +77,7 @@ export default function Layout({
                 </DropdownMenuItem>
                 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => signOut()}>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {}}>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
