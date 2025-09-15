@@ -24,7 +24,7 @@ import Link from "next/link";
 import { MdOutlineChatBubbleOutline } from "react-icons/md";
 
 const OrderTable = () => {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const [orders, setOrders] = useState<any | null>();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -34,34 +34,34 @@ const OrderTable = () => {
     console.log(update);
   };
 
-  useEffect(() => {
-    console.log(session?.user?.email!);
+  // useEffect(() => {
+  //   // console.log(session?.user?.email!);
 
-    if (session) {
-      let i = 0;
-      setInterval(async () => {
-        console.log(i++);
-        // const response = await fetch(`/api/order/itoro@gmail.com`)
-        const response = await fetch(`/api/order`);
-        const userorders = await response.json();
-        const latest = userorders.reverse();
-        setOrders(latest);
+  //   if (session) {
+  //     let i = 0;
+  //     setInterval(async () => {
+  //       console.log(i++);
+  //       // const response = await fetch(`/api/order/itoro@gmail.com`)
+  //       const response = await fetch(`/api/order`);
+  //       const userorders = await response.json();
+  //       const latest = userorders.reverse();
+  //       setOrders(latest);
 
-        console.log(userorders);
-        setIsLoading(false);
-      }, 5000);
-    }
-  }, [session]);
+  //       console.log(userorders);
+  //       setIsLoading(false);
+  //     }, 5000);
+  //   }
+  // }, [session]);
 
-  if (isLoading) {
-    return (
-      <div className={"w-full h-96 flex justify-center items-end "}>
-        <div className="flex gap-3 items-center">
-          <div className="loader"></div> Loading...
-        </div>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className={"w-full h-96 flex justify-center items-end "}>
+  //       <div className="flex gap-3 items-center">
+  //         <div className="loader"></div> Loading...
+  //       </div>
+  //     </div>
+  //   );
+  // }
   return (
     <div>
       <Table>

@@ -43,6 +43,7 @@ import {
   DropdownMenuSeparator,
 } from "@radix-ui/react-dropdown-menu";
 import { IoIosWallet } from "react-icons/io";
+import { useGetAuthUserQuery } from "@/state/api";
 
 type Valuable<T> = {
   [K in keyof T as T[K] extends null | undefined ? never : K]: T[K];
@@ -61,16 +62,40 @@ function filterValues<T extends {}, V = Valuable<T>>(obj: T): V {
   ) as V;
 }
 
+// Number formatting utilities
+const formatNumberWithCommas = (value: number | string): string => {
+  if (value === "" || value === undefined || value === null) return "";
+  
+  const numStr = value.toString();
+  const parts = numStr.split('.');
+  const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  
+  return parts[1] !== undefined ? `${integerPart}.${parts[1]}` : integerPart;
+};
+
+const parseFormattedNumber = (formattedValue: string): number => {
+  if (!formattedValue) return 0;
+  return parseFloat(formattedValue.replace(/,/g, '')) || 0;
+};
+
 const CurrencyCalculator = () => {
+
+  const {data:authUser, isLoading:authLoading} = useGetAuthUserQuery()
+  
   const router = useRouter();
   const { toast } = useToast();
 
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const [from, setFrom] = useState<string | undefined>();
   const [to, setTo] = useState<string | undefined>();
   const [rate, setRate] = useState(0.0);
-  const [fromAmount, setFromAmount] = useState<number | undefined>();
-  const [toAmount, setToAmount] = useState<number | undefined>();
+  const [fromAmount, setFromAmount] = useState<number | 0>();
+  const [toAmount, setToAmount] = useState<number | 0>();
+  
+  // Display values for formatted inputs
+  const [fromAmountDisplay, setFromAmountDisplay] = useState<string>("");
+  const [toAmountDisplay, setToAmountDisplay] = useState<string>("");
+  
   const [focus, setFocus] = useState("from");
   const [fromSymbol, setFromSymbol] = useState("#");
   const [toSymbol, setToSymbol] = useState("#");
@@ -120,30 +145,48 @@ const CurrencyCalculator = () => {
   };
 
   const handleChangeToValue = (e: any) => {
-    const num = e.target.value;
-    // const options = {  maximumFractionDigits: 2   } ;
-    // const formattedNumber = Intl.NumberFormat("en-US",options).format(num);
-
-    // console.log(focus);
+    const inputValue = e.target.value;
+    
+    // Remove commas and parse the number
+    const numericValue = parseFormattedNumber(inputValue);
+    
     if (rate === 0) return;
 
     if (focus === "from") {
-      setFromAmount(num);
-      setToAmount(parseFloat(((1 / rate) * num).toFixed(2)));
+      setFromAmount(numericValue);
+      setFromAmountDisplay(formatNumberWithCommas(inputValue));
+      
+      const calculatedToAmount = parseFloat(((1 / rate) * numericValue).toFixed(2));
+      setToAmount(calculatedToAmount);
+      setToAmountDisplay(formatNumberWithCommas(calculatedToAmount));
     }
+    
     if (focus === "to") {
-      setToAmount(num);
-      setFromAmount(parseFloat((rate * num).toFixed(2)));
+      setToAmount(numericValue);
+      setToAmountDisplay(formatNumberWithCommas(inputValue));
+      
+      const calculatedFromAmount = parseFloat((rate * numericValue).toFixed(2));
+      setFromAmount(calculatedFromAmount);
+      setFromAmountDisplay(formatNumberWithCommas(calculatedFromAmount));
     }
 
-    if (fromAmount !== undefined && toAmount !== undefined) {
+    if (numericValue > 0) {
       setDisabled(false);
     }
-
-    // if(fromAmount == 0 && toAmount == 0){
-    //   setDisabled(true);
-    // }
   };
+
+  // Update display values when amounts change programmatically
+  useEffect(() => {
+    if (fromAmount !== undefined) {
+      setFromAmountDisplay(formatNumberWithCommas(fromAmount));
+    }
+  }, [fromAmount]);
+
+  useEffect(() => {
+    if (toAmount !== undefined) {
+      setToAmountDisplay(formatNumberWithCommas(toAmount));
+    }
+  }, [toAmount]);
 
   const getUserRole = async (email: string) => {
     const data = await fetch(`/api/user/${email}`);
@@ -163,10 +206,10 @@ const CurrencyCalculator = () => {
   };
 
   const handlePlaceOrder = async () => {
-    console.log("order placed by " + session?.user?.email!);
+    // console.log("order placed by " + session?.user?.email!);
 
     let data = {
-      userEmail: session?.user?.email!,
+      // userEmail: session?.user?.email!,
       destinationAccountNumber,
       destinationAccountName,
       walletAddress: walletAddress.current.value,
@@ -216,20 +259,39 @@ const CurrencyCalculator = () => {
     }
   };
 
+  // Enhanced prop setters for child components
+  const enhancedSetFromAmount = (amount: number | undefined) => {
+    setFromAmount(amount);
+    if (amount !== undefined) {
+      setFromAmountDisplay(formatNumberWithCommas(amount));
+    } else {
+      setFromAmountDisplay("");
+    }
+  };
+
+  const enhancedSetToAmount = (amount: number | undefined) => {
+    setToAmount(amount);
+    if (amount !== undefined) {
+      setToAmountDisplay(formatNumberWithCommas(amount));
+    } else {
+      setToAmountDisplay("");
+    }
+  };
+
   useEffect(() => {
     fetchWallets();
   }, []);
 
-  if (session) {
-    // alert(session?.user?.email)
-    const userRole = getUserRole(session?.user?.email!);
+  // if (session) {
+  //   // alert(session?.user?.email)
+  //   const userRole = getUserRole(session?.user?.email!);
 
     return (
       <>
         {/* <div className="">{session?.user?.email}</div> */}
         <div className="flex flex-col sm:flex-row gap-10 w-full">
           <div className="flex-1 flex flex-col gap-3">
-            <h3 className="capitalize text-sm text-gray-500 font-semibold">
+            <h3 className="uppercase text-md text-gray-500 font-semibold">
               from
             </h3>
             <div className="border-b">
@@ -238,8 +300,8 @@ const CurrencyCalculator = () => {
                 setRate={setRate}
                 setFromSymbol={setFromSymbol}
                 setToSymbol={setToSymbol}
-                setToAmount={setToAmount}
-                setFromAmount={setFromAmount}
+                setToAmount={enhancedSetToAmount}
+                setFromAmount={enhancedSetFromAmount}
               />
             </div>
             <div className="text-4xl sm:text-7xl grid grid-cols-12 gap-6">
@@ -248,11 +310,10 @@ const CurrencyCalculator = () => {
               </span>
               <div className="col-span-10">
                 <input
-                  type="number"
+                  type="text"
                   className="w-full h-full px-4 rounded-md"
                   placeholder="0.00"
-                  value={fromAmount}
-                  step="0.01"
+                  value={fromAmountDisplay}
                   onFocus={() => {
                     setFocus("from");
                   }}
@@ -266,7 +327,7 @@ const CurrencyCalculator = () => {
           </div>
 
           <div className="flex-1 flex flex-col gap-3">
-            <h3 className="capitalize text-sm text-gray-500 font-semibold">
+            <h3 className="uppercase text-md text-gray-500 font-semibold">
               to
             </h3>
             <div className="border-b">
@@ -277,17 +338,18 @@ const CurrencyCalculator = () => {
                 setToSymbol={setToSymbol}
               />
             </div>
+            {to && (
+
             <div className="text-4xl sm:text-7xl grid grid-cols-12 gap-6">
               <span className="col-span-2 flex items-center font-semibold text-3xl text-gray-500 text-center justify-center">
                 {toSymbol}
               </span>
               <div className="col-span-10">
                 <input
-                  type="number"
+                  type="text"
                   className="w-full px-4 rounded-md"
                   placeholder="0.00"
-                  value={toAmount}
-                  step="0.01"
+                  value={toAmountDisplay}
                   onFocus={() => {
                     setFocus("to");
                   }}
@@ -298,6 +360,7 @@ const CurrencyCalculator = () => {
                 />
               </div>
             </div>
+            )}
           </div>
         </div>
 
@@ -308,7 +371,7 @@ const CurrencyCalculator = () => {
             <Drawer>
               <DrawerTrigger
                 className="border w-full h-full rounded-lg bg-black hover:bg-black/90 text-white"
-                // disabled={disabled}
+                // disabled={disabled}  
               >
                 Place an order
               </DrawerTrigger>
@@ -316,7 +379,7 @@ const CurrencyCalculator = () => {
                 <DrawerHeader>
                   <DrawerTitle>Create Order</DrawerTitle>
                   <DrawerDescription>
-                    You will receive {toAmount}
+                  {toSymbol}{" "}{toAmountDisplay} will be received.
                   </DrawerDescription>
                 </DrawerHeader>
                 <div className=" p-8">
@@ -393,7 +456,7 @@ const CurrencyCalculator = () => {
                                     }
                                   >
                                     <div className="font-bold">
-                                      {wallet.cryptoCurrencyName}
+                                      {wallet.cryptoCurrencyName} ({wallet.tranferNetwork})
                                     </div>
                                     <div className="text-sm text-gray-400">
                                       {wallet.cryptoCurrencyAddress}
@@ -489,7 +552,7 @@ const CurrencyCalculator = () => {
         </div>
       </>
     );
-  }
+  // }
 };
 
 export default CurrencyCalculator;

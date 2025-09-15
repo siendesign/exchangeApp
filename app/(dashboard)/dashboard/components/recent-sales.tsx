@@ -3,27 +3,26 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export function RecentSales() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const [orders, setOrders] = useState<any | null>();
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    console.log(session?.user?.email!);
+  // useEffect(() => {
 
-    if (session) {
-      let i = 0;
-      setInterval(async () => {
-        console.log(i++);
-        const response = await fetch(`/api/order`);
-        const userorders = await response.json();
-        const latest = userorders.reverse().slice(0, 5);
-        setOrders(latest);
+  //   if (session) {
+  //     let i = 0;
+  //     setInterval(async () => {
+  //       console.log(i++);
+  //       const response = await fetch(`/api/order`);
+  //       const userorders = await response.json();
+  //       const latest = userorders.reverse().slice(0, 5);
+  //       setOrders(latest);
 
-        console.log(userorders);
-        setIsLoading(false);
-      }, 5000);
-    }
-  }, [session]);
+  //       console.log(userorders);
+  //       setIsLoading(false);
+  //     }, 5000);
+  //   }
+  // }, [session]);
   return (
     <div className="space-y-8">
       {orders &&

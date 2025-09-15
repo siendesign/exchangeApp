@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 // import { toast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
+import { useGetAuthUserQuery } from "@/state/api";
 
 const profileFormSchema = z.object({
   notificationEmail: z
@@ -70,7 +71,11 @@ const defaultValues: Partial<ProfileFormValues> = {
 };
 
 export function ProfileForm() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
+
+  const {data:authuser} = useGetAuthUserQuery()
+  console.log(authuser);
+  
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -128,7 +133,7 @@ export function ProfileForm() {
     }
 
     const request = await fetch(
-      `/api/password/update/${session?.user?.email!}`,
+      `/api/password/update/${authuser?.user?.email!}`,
       {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -186,7 +191,7 @@ export function ProfileForm() {
         <h3 className="text-lg font-medium">Change Password</h3>
         <p className="text-sm text-muted-foreground">
           This is how you will change the Administrative user password.{" "}
-          {session?.user?.email!}
+          {/* {session?.user?.email!} */}
         </p>
       </div>
       <Form {...passwordForm}>

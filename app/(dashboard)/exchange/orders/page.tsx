@@ -36,13 +36,14 @@ import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { MdOutlineChatBubbleOutline } from "react-icons/md";
 import Link from "next/link";
+import { useGetAuthUserQuery } from "@/state/api";
 
 const page = () => {
-  const { data: session } = useSession();
+  const { data: authUser } = useGetAuthUserQuery();
   const { toast } = useToast();
 
   const [orders, setOrders] = useState<any | null>();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -67,7 +68,7 @@ const page = () => {
     setUploading(true);
     const formData = new FormData();
     formData.append("myImage", selectedFile!);
-    formData.append("from", session?.user?.email!);
+    formData.append("from", authUser?.user?.email!);
     formData.append("to", "admin");
     formData.append("type", "image");
     formData.append("id", id);
@@ -95,24 +96,22 @@ const page = () => {
     setSelectedFile(undefined);
   };
 
+  // useEffect(() => {
+  //   console.log(authUser?.user?.email!);
 
-
-  useEffect(() => {
-    console.log(session?.user?.email!);
-
-    if (session) {
-      let i = 0;
-      setInterval(async () => {
-        console.log(i++);
-        const response = await fetch(`/api/order/${session?.user?.email!}`);
-        const userorders = await response.json();
-        const latest = userorders.reverse();
-        setOrders(latest);
-        setIsLoading(false);
-        // console.log(userorders);
-      }, 5000);
-    }
-  }, [session]);
+  //   if (session) {
+  //     let i = 0;
+  //     setInterval(async () => {
+  //       console.log(i++);
+  //       const response = await fetch(`/api/order/${session?.user?.email!}`);
+  //       const userorders = await response.json();
+  //       const latest = userorders.reverse();
+  //       setOrders(latest);
+  //       setIsLoading(false);
+  //       // console.log(userorders);
+  //     }, 5000);
+  //   }
+  // }, [session]);
 
   if (isLoading) {
     return (
@@ -126,7 +125,7 @@ const page = () => {
     <div>
       <Table>
         <TableCaption>
-          A list of your recent orders.{session?.user?.email!}
+          A list of your recent orders.{authUser?.user?.email!}
         </TableCaption>
         <TableHeader>
           <TableRow>

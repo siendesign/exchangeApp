@@ -1,4 +1,5 @@
 "use client";
+import { logout } from "@/app/(auth)/action";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,8 +10,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Image from "next/image";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Layout({
   children,
@@ -18,11 +21,22 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
 
-  
+  const router = useRouter();
+
+  const signOut = async () =>{
+    console.log("logging out...");
+    
+    await logout();
+
+   window.location.reload()
+  }
   return (
     <main className="max-w-6xl mx-auto p-8 flex flex-col gap-10 h-screen">
       <div className="flex items-center justify-between">
-        <h1 className="font-bold text-2xl">GuyExchange</h1>
+        <h1 className="font-bold text-2xl">RayEx</h1>
+        {/* <div className="relaltive h-auto w-30">
+          <img  src={"/image1.png"} alt="logo" className="w-40"/>
+        </div> */}
 
         <div className="flex gap-6 items-center">
           <div className="capitalize font-semibold text-gray-500 hidden sm:block">
@@ -38,7 +52,7 @@ export default function Layout({
             >
               orders
             </Link>
-            <Button className="mx-2" onClick={() => {}}>
+            <Button className="mx-2" onClick={signOut}>
               {" "}
               signout
             </Button>

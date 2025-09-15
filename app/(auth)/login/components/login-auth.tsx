@@ -7,11 +7,11 @@ import { cn } from "@/lib/utils";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import { signInWithEmailAndPassword } from "../../action";
 
 interface LoginAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const LoginAuthForm = ({ className, ...props }: LoginAuthFormProps) => {
-  const { data: session } = useSession();
   const router = useRouter();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
@@ -45,11 +45,7 @@ const LoginAuthForm = ({ className, ...props }: LoginAuthFormProps) => {
     }
 
     try {
-      const res = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      })
+     const res = await signInWithEmailAndPassword({email, password})
 
       // console.log(res);
 

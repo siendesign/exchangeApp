@@ -7,36 +7,7 @@ import { useEffect, useState } from "react";
 import Carousel from "./components/Carousel";
 
 const page = () => {
-  const router = useRouter();
- 
-  const [loading, setLoading] = useState(true);
-
-  const getUserRole = async (email: string) => {
-    const data = await fetch(`/api/user/${email}`);
-    const json = await data.json();
-
-    if (json.role === "admin") {
-      router.push("/dashboard");
-    } else {
-      setLoading(false);
-    }
-    return json.role;
-  };
-
-
-
-  // console.log(session?.user?.email!);
-
-
-  if (loading) {
-    return (
-      <div className={"w-full h-96 flex justify-center items-end "}>
-        <div className="flex gap-3 items-center">
-          <div className="loader"></div>
-        </div>
-      </div>
-    );
-  }
+  
 
   return (
     <>

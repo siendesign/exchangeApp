@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export async function signUpWithEmailAndPassword(data: {
   email: string;
@@ -50,4 +51,10 @@ export async function signInWithEmailAndPassword(data: {
       return { user: null, error: error.message };
     }
   } catch (error) {}
+}
+
+export async function logout(){
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  return 
 }
