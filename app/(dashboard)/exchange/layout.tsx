@@ -91,7 +91,7 @@ export default function Layout({
                 </DropdownMenuItem>
                 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => {}}>Log out</DropdownMenuItem>
+                <DropdownMenuItem onClick={signOut}>Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

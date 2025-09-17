@@ -1,4 +1,5 @@
 'use client'
+import { logout } from "@/app/(auth)/action";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,12 +14,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export function UserNav() {
-
-  const handleSignOut = () =>{
+const router = useRouter();
+  const handleSignOut = async () =>{
     localStorage.removeItem("currentTab");
-    signOut()
+    console.log("logging out...");
+        
+        await logout();
+    
+       window.location.reload()
+
   }
   return (
     <DropdownMenu>
