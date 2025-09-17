@@ -10,7 +10,7 @@ export async function POST(
   { params }: { params: { orderID: string } }
 ) {
   const orderID = params.orderID;
-  const { orderId, message, from, type, to } = await req.json();
+  const { orderId, message, from, type, to, urlHost } = await req.json();
   const title = `New Chat Message from ${from}`;
   console.log(message);
   console.log(title);
@@ -29,9 +29,14 @@ export async function POST(
     console.log(orderDetail.userEmail);
     await newChat.save();
 
-    if (from !== "admin"){
+
+    console.log("to:",to);
+    
+    const link = `${urlHost}/dasboard/chat/${orderId}`
+
+    if (to === "admin"){
       await sendMail({
-        to: email.value,
+        to: "victoryessien01@gmail.com",
         name: "",
         subject: `ORDER${orderID} New Chat Message`,
         body: `<!--
@@ -191,7 +196,7 @@ export async function POST(
         <!--[if !mso]>--><td class="t5" style="width:480px;padding:0 0 22px 0;">
         <!--<![endif]-->
         <!--[if mso]><td class="t5" style="width:480px;padding:0 0 22px 0;"><![endif]-->
-        <p class="t4" style="margin:0;Margin:0;font-family:Albert Sans,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">"${message}"</p></td>
+        <p class="t4" style="margin:0;Margin:0;font-family:Albert Sans,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">${message}</p></td>
         </tr></table>
   
         </td></tr><tr><td>
@@ -393,7 +398,9 @@ export async function POST(
         </html>`,
       });
     }
-
+    
+    console.log("Host:", `${urlHost}/dasboard/chat/${orderId}`);
+    
 
 
 

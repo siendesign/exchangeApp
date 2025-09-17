@@ -72,7 +72,8 @@ const UserAuthForm = ({ className, ...props }: UserAuthFormProps) => {
       });
     }else{
       console.log(result?.user);
-      
+      // reroute to valid base route
+      router.push("/exchange");
     }
     
    

@@ -9,11 +9,12 @@ import { useEffect, useRef, useState } from "react";
 import { LuSendHorizonal } from "react-icons/lu";
 import { MainNav } from "../../components/main-nav";
 import { UserNav } from "../../components/user-nav";
+import { useGetAuthUserQuery } from "@/state/api";
 
 const page = ({ params }: { params: { orderID: string } }) => {
   const chatRef = useRef<any>(null);
   const { orderID } = params;
-  const { data: session } = useSession();
+  const { data: session } = useGetAuthUserQuery()
 
   const [paymentImage, setPaymentImage] = useState<string | undefined>();
   const [message, setMessage] = useState<string | undefined>();

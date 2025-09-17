@@ -1,0 +1,8 @@
+admin login
+
+email: info@rayex.co
+pwd: Admin@123
+
+
+user1@test.com
+Pass@123

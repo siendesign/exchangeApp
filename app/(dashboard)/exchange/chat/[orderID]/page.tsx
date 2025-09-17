@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { useGetAuthUserQuery } from "@/state/api";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
@@ -11,7 +12,7 @@ import { LuSendHorizonal } from "react-icons/lu";
 const page = ({ params }: { params: { orderID: string } }) => {
   const chatRef = useRef<any>(null);
   const { orderID } = params;
-  const { data: session } = useSession();
+  const { data: session } = useGetAuthUserQuery();
 
   const [paymentImage, setPaymentImage] = useState<string | undefined>();
   const [message, setMessage] = useState<string | undefined>();
@@ -78,6 +79,7 @@ const page = ({ params }: { params: { orderID: string } }) => {
           from: session?.user?.email!,
           to: "admin",
           type: type,
+          urlHost: window.location.origin,
         }),
       });
       const response = await request.json();
@@ -225,13 +227,13 @@ const page = ({ params }: { params: { orderID: string } }) => {
                     cx="168.5"
                   ></circle>
                   <path
-                    stroke-linecap="round"
+                    strokeLinecap="round"
                     strokeWidth="25"
                     stroke="#6c6c6c"
                     d="M167.759 79V259"
                   ></path>
                   <path
-                    stroke-linecap="round"
+                    strokeLinecap="round"
                     strokeWidth="25"
                     stroke="#6c6c6c"
                     d="M79 167.138H259"

@@ -31,7 +31,7 @@ export default function Layout({
    window.location.reload()
   }
   return (
-    <main className="max-w-6xl mx-auto p-8 flex flex-col gap-10 h-screen">
+    <main className="max-w-7xl mx-auto p-8 flex flex-col gap-10 h-screen">
       <div className="flex items-center justify-between">
         <h1 className="font-bold text-2xl">RayEx</h1>
         {/* <div className="relaltive h-auto w-30">

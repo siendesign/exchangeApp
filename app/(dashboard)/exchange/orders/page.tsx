@@ -56,7 +56,7 @@ const page = () => {
       // title: "Scheduled: Catch up ",
       description: "copied to clipboard",
     });
-  };
+  }; 
 
   const handleUpdateStatus = async (id: any, value: string) => {
     const update = await updateOrderStatus(id, value);
@@ -96,22 +96,22 @@ const page = () => {
     setSelectedFile(undefined);
   };
 
-  // useEffect(() => {
-  //   console.log(authUser?.user?.email!);
+  useEffect(() => {
+    console.log(authUser?.user?.email!);
 
-  //   if (session) {
-  //     let i = 0;
-  //     setInterval(async () => {
-  //       console.log(i++);
-  //       const response = await fetch(`/api/order/${session?.user?.email!}`);
-  //       const userorders = await response.json();
-  //       const latest = userorders.reverse();
-  //       setOrders(latest);
-  //       setIsLoading(false);
-  //       // console.log(userorders);
-  //     }, 5000);
-  //   }
-  // }, [session]);
+    if (authUser) {
+      let i = 0;
+      setInterval(async () => {
+        console.log(i++);
+        const response = await fetch(`/api/order/${authUser?.user?.email!}`);
+        const userorders = await response.json();
+        const latest = userorders.reverse();
+        setOrders(latest);
+        setIsLoading(false);
+        // console.log(userorders);
+      }, 5000);
+    }
+  }, [authUser]);
 
   if (isLoading) {
     return (
