@@ -8,7 +8,7 @@ const Navbar = () => {
       <div className="flex justify-between items-center ">
         <div className="">
           <div className="relative z-20 flex items-center text-sm font-bold">
-            <svg
+            {/* <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="none"
@@ -20,7 +20,10 @@ const Navbar = () => {
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
-            <span className="text-xl">Rayex</span>
+            <span className="text-xl">Rayex</span> */}
+            <div className="relaltive h-auto w-30">
+              <img src={"/image3.png"} alt="logo" className="w-24" />
+            </div>
           </div>
         </div>
         <div className="">
