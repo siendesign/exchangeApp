@@ -51,7 +51,7 @@ const CurrencyDropdown = ({
   });
 
   // Filter currencies based on search term
-  const filteredCurrencies = cdata?.filter((currency) => {
+  const filteredCurrencies = (cdata || []).filter((currency) => {
     const searchLower = searchTerm.toLowerCase();
     return (
       currency.abbrev.toLowerCase().includes(searchLower) ||
