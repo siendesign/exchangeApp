@@ -4,40 +4,63 @@ import Wallets from "@/models/walletsmodel";
 
 export async function POST(req: NextRequest) {
   try {
-    db.connect();
+    await db.connect();
     const {
       cryptoCurrencyName,
       cryptoCurrencySymbol,
       cryptoCurrencyAddress,
       tranferNetwork,
     } = await req.json();
+
+    // Validate required fields
+    if (!cryptoCurrencyName || !cryptoCurrencySymbol || !cryptoCurrencyAddress || !tranferNetwork) {
+      return NextResponse.json(
+        { error: "All fields are required" },
+        { status: 400 }
+      );
+    }
+
     const newWallet = new Wallets({
       cryptoCurrencyName: cryptoCurrencyName,
       cryptoCurrencySymbol: cryptoCurrencySymbol,
       cryptoCurrencyAddress: cryptoCurrencyAddress,
       tranferNetwork: tranferNetwork,
     });
+
     await newWallet.save();
+    
     return NextResponse.json(
       {
-        cryptoCurrencyName,
-        cryptoCurrencySymbol,
-        cryptoCurrencyAddress,
-        tranferNetwork,
+        message: "Wallet created successfully",
+        wallet: {
+          cryptoCurrencyName,
+          cryptoCurrencySymbol,
+          cryptoCurrencyAddress,
+          tranferNetwork,
+        }
       },
-      { status: 200 }
+      { status: 201 }
     );
   } catch (error) {
-    console.log(error);
+    console.error("POST /api/wallet error:", error);
+    return NextResponse.json(
+      { error: "Failed to create wallet" },
+      { status: 500 }
+    );
   }
 }
 
-export async function GET(req: Request, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
-    db.connect();
+    await db.connect();
     const wallets = await Wallets.find({});
+    
     return NextResponse.json(wallets, { status: 200 });
   } catch (error) {
-    console.log(error);
+    console.error("GET /api/wallet error:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch wallets" },
+      { status: 500 }
+    );
   }
 }

@@ -137,11 +137,44 @@ const CurrencyCalculator = () => {
   };
 
   const fetchWallets = async () => {
-    const request = await fetch(`/api/wallet`);
-    const response = await request.json();
-    console.log(response);
-    if (response.length > 0) {
-      setWalltes(response);
+    try {
+      const request = await fetch(`/api/wallet`);
+      
+      // Check if the request was successful
+      if (!request.ok) {
+        console.error(`HTTP error! status: ${request.status}`);
+        return;
+      }
+      
+      // Check content type to ensure it's JSON
+      const contentType = request.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        console.error('Response is not JSON');
+        return;
+      }
+      
+      // Check if there's actually content to parse
+      const textResponse = await request.text();
+      if (!textResponse) {
+        console.log('Empty response received from /api/wallet');
+        return;
+      }
+      
+      // Parse the JSON
+      const response = JSON.parse(textResponse);
+      console.log(response);
+      
+      if (response && response.length > 0) {
+        setWalltes(response);
+      }
+    } catch (error) {
+      console.error('Failed to fetch wallets:', error);
+      // Optionally show a toast notification to the user
+      // toast({
+      //   variant: "destructive",
+      //   title: "Error",
+      //   description: "Failed to load payment methods. Please try again.",
+      // });
     }
   };
 

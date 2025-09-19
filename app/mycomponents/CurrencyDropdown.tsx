@@ -40,7 +40,8 @@ const CurrencyDropdown = ({
   setToAmount,
   setFromAmount,
 }: Props) => {
-  const [cdata, setCdata] = useState<Currency[] | undefined>();
+  // Fix 1: Initialize as empty array instead of undefined
+  const [cdata, setCdata] = useState<Currency[]>([]);
   const [selectedCurrency, setSelectedCurrency] = useState<Currency | undefined>();
   const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
@@ -50,15 +51,16 @@ const CurrencyDropdown = ({
     queryFn: getAllCurrencies,
   });
 
-  // Filter currencies based on search term
-  const filteredCurrencies = (cdata || []).filter((currency) => {
+  // Fix 2: Use cdata directly since it's now always an array
+  // Add additional safety check with Array.isArray
+  const filteredCurrencies = Array.isArray(cdata) ? cdata.filter((currency) => {
     const searchLower = searchTerm.toLowerCase();
     return (
       currency.abbrev.toLowerCase().includes(searchLower) ||
       currency.name?.toLowerCase().includes(searchLower) ||
       currency.country?.toLowerCase().includes(searchLower)
     );
-  });
+  }) : [];
 
   const handleValue = (value: string) => {
     setFrom(value);
@@ -68,8 +70,9 @@ const CurrencyDropdown = ({
     setToAmount(undefined);
     setFromAmount(undefined);
 
-    // Find and set the selected currency
-    let obj = data?.find((o) => o.abbrev === value);
+    // Fix 3: Use cdata instead of data for consistency
+    // and add safety check
+    const obj = Array.isArray(cdata) ? cdata.find((o) => o.abbrev === value) : undefined;
     if (obj) {
       setSelectedCurrency(obj);
       setFromSymbol(obj.symbol);
@@ -88,15 +91,19 @@ const CurrencyDropdown = ({
   };
 
   useEffect(() => {
-    if (data) {
+    // Fix 4: Add proper validation of the data
+    if (data && Array.isArray(data)) {
       setCdata(data);
+    } else if (data) {
+      // If data exists but isn't an array, log error and set empty array
+      console.error('getAllCurrencies returned non-array data:', data);
+      setCdata([]);
     }
   }, [data]);
 
   if (isLoading) {
     return (
       <div className="my-4 flex items-center justify-center">
-        {/* <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div> */}
         <span className="ml-2 text-gray-500">Loading currencies...</span>
       </div>
     );
@@ -164,7 +171,7 @@ const CurrencyDropdown = ({
               )}
             </SelectLabel>
             
-            {filteredCurrencies && filteredCurrencies.length > 0 ? (
+            {filteredCurrencies.length > 0 ? (
               filteredCurrencies.map((currency) => (
                 <SelectItem 
                   key={currency._id} 
@@ -218,7 +225,7 @@ const CurrencyDropdown = ({
       {/* Quick access buttons for popular currencies */}
       <div className="flex gap-2 mt-2 flex-wrap">
         {["USD", "EUR", "GBP", "JPY", "CAD"].map((popular) => {
-          const popularCurrency = cdata?.find(c => c.abbrev === popular);
+          const popularCurrency = cdata.find(c => c.abbrev === popular);
           if (!popularCurrency) return null;
           
           return (
