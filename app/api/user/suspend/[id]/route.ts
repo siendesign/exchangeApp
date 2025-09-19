@@ -17,9 +17,9 @@ export async function PUT(
     const user = await Users.findOne({ _id: id }, { email: 1, _id: 0 });
     const userEmail = user.email;
     //email
-    const AdminEmail = await Settings.findOne({
-      settingName: "notificationEmail",
-    });
+    // const AdminEmail = await Settings.findOne({
+    //   settingName: "notificationEmail",
+    // });
 
     const title = "NOTICE: USER SUSPENDED";
     const message = `
@@ -32,7 +32,7 @@ export async function PUT(
       While suspended, you will not be able to access your account or use any features of the platform.<br><br>
       
       If you believe this suspension is a mistake or have any questions, please contact us at  ${
-        AdminEmail.value
+       "info@rayex.co"
       } within 3 days.<br><br>
       
       Thank you for your understanding.<br><br>
@@ -224,12 +224,12 @@ export async function PUT(
 
     This is to inform you that ${
       userEmail.split("@")[0]
-    } has been temporarily suspended from Guy Exchange.
+    } has been temporarily suspended from the  RayEx Platform.
     
     `;
 
     await sendMail({
-      to: AdminEmail.value,
+      to: "victoryessien01@gmail.com",
       name: "",
       subject: `NOTICE: USER SUSPENDED`,
       body: `<!--
