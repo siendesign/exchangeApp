@@ -18,9 +18,9 @@ export async function DELETE(
     const userEmail = user.email;
 
     //email
-    const AdminEmail = await Settings.findOne({
-      settingName: "notificationEmail",
-    });
+    // const AdminEmail = await Settings.findOne({
+    //   settingName: "notificationEmail",
+    // });
 
     const title = "NOTICE: USER DELETED";
     const message = `
@@ -222,7 +222,7 @@ export async function DELETE(
       `;
 
     await sendMail({
-      to: AdminEmail.value,
+      to: "victoryessien01@gmail.com",
       name: "",
       subject: `NOTICE: USER DELETED`,
       body: `<!--

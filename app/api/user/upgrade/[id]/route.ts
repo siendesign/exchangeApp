@@ -18,9 +18,9 @@ export async function PUT(
     const userEmail = user.email;
 
     //email
-    const AdminEmail = await Settings.findOne({
-      settingName: "notificationEmail",
-    });
+    // const AdminEmail = await Settings.findOne({
+    //   settingName: "notificationEmail",
+    // });
 
     const title = "NOTICE: USER UPGRADE";
     const message = `
@@ -222,7 +222,7 @@ export async function PUT(
       `;
 
     await sendMail({
-      to: AdminEmail.value,
+      to: "victoryessien01@gmail.com",
       name: "",
       subject: `NOTICE: USER UPGRADE`,
       body: `<!--
