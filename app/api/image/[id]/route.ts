@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
     //   ""
     // )}-${uniqueSuffix}.${mime.getExtension(image.type)}`;
     const filename = `${uniqueSuffix}.${mime.getExtension(image.type)}`;
-    await writeFile(`${uploadDir}/${filename}`, buffer);
+    await writeFile(`${uploadDir}/${filename}`, new Uint8Array(buffer));
     const fileUrl = `${relativeUploadDir}/${filename}`;
 
     const imageData = await readFile(`${uploadDir}/${filename}`, {
