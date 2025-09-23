@@ -5,6 +5,7 @@ import { join } from "path";
 import _ from "lodash";
 import Orders from "@/models/ordermodel";
 import { sendMail } from "@/lib/mail";
+import { Buffer } from "buffer";
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -22,7 +23,8 @@ export async function POST(req: NextRequest) {
     })
     .replace(/\//g, "-")}`;
 
-  const uploadDir = join(process.cwd(), "public", relativeUploadDir);
+  // const uploadDir = join(process.cwd(), "public", relativeUploadDir);
+  const uploadDir = relativeUploadDir
 
   try {
     await stat(uploadDir);
@@ -52,7 +54,7 @@ export async function POST(req: NextRequest) {
     //   ""
     // )}-${uniqueSuffix}.${mime.getExtension(image.type)}`;
     const filename = `${uniqueSuffix}.${mime.getExtension(image.type)}`;
-    await writeFile(`${uploadDir}/${filename}`, buffer);
+    await writeFile(`${uploadDir}/${filename}`, new Uint8Array(buffer));
     const fileUrl = `${relativeUploadDir}/${filename}`;
 
     const imageData = await readFile(`${uploadDir}/${filename}`, {
