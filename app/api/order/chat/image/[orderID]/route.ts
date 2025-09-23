@@ -16,51 +16,51 @@ export async function POST(
   const formData = await req.formData();
 
   const id = (formData.get("id") as string) || null;
-  const image = (formData.get("myImage") as File) || null;
+  const image = (formData.get("imageUrl") as string) || null;
   const from = (formData.get("from") as string) || null;
   const type = (formData.get("type") as string) || null;
   const to = (formData.get("to") as string) || null;
   const title = `New Chat Message from ${from}`;
   
 
-  const buffer = Buffer.from(await image.arrayBuffer());
+  // const buffer = Buffer.from(await image.arrayBuffer());
 
-  const relativeUploadDir = `/uploads/${new Date(Date.now())
-    .toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    })
-    .replace(/\//g, "-")}`;
+  // const relativeUploadDir = `/uploads/${new Date(Date.now())
+  //   .toLocaleDateString("id-ID", {
+  //     day: "2-digit",
+  //     month: "2-digit",
+  //     year: "numeric",
+  //   })
+  //   .replace(/\//g, "-")}`;
 
-  const uploadDir = join(process.cwd(), "public", relativeUploadDir);
+  // const uploadDir = join(process.cwd(), "public", relativeUploadDir);
 
-  try {
-    await stat(uploadDir);
-  } catch (e: any) {
-    if (e.code === "ENOENT") {
-      // This is for checking the directory is exist (ENOENT : Error No Entry)
-      await mkdir(uploadDir, { recursive: true });
-    } else {
-      console.error(
-        "Error while trying to create directory when uploading a file\n",
-        e
-      );
-      return NextResponse.json(
-        { error: "Something went wrong." },
-        { status: 500 }
-      );
-    }
-  }
+  // try {
+  //   // await stat(uploadDir);
+  // } catch (e: any) {
+  //   if (e.code === "ENOENT") {
+  //     // This is for checking the directory is exist (ENOENT : Error No Entry)
+  //     await mkdir(uploadDir, { recursive: true });
+  //   } else {
+  //     console.error(
+  //       "Error while trying to create directory when uploading a file\n",
+  //       e
+  //     );
+  //     return NextResponse.json(
+  //       { error: "Something went wrong." },
+  //       { status: 500 }
+  //     );
+  //   }
+  // }
 
   console.log(formData);
 
   try {
-    const uniqueSuffix = `${Date.now()}-${id}`;
-    const filename = `${uniqueSuffix}.${mime.getExtension(image.type)}`;
-    await writeFile(`${uploadDir}/${filename}`, buffer);
-    const fileUrl = `${relativeUploadDir}/${filename}`;
-    const message = fileUrl;
+    // const uniqueSuffix = `${Date.now()}-${id}`;
+    // const filename = `${uniqueSuffix}.${mime.getExtension(image.type)}`;
+    // await writeFile(`${uploadDir}/${filename}`, new Uint8Array(buffer));
+    // const fileUrl = `${relativeUploadDir}/${filename}`;
+    const message = image;
     const newChat = new Chat({ orderId:id, message:message, from:from,  to:to, type:type });
 
     const email = await Settings.findOne({
@@ -70,9 +70,9 @@ export async function POST(
     await newChat.save();
 
     await sendMail({
-        to: email.value,
+        to: "victoryessien01@gmail.com",
         name: "",
-        subject: `ORDER${orderID} New Chat Message`,
+        subject: `ORDER ${orderID} New Chat Message`,
         body: `<!--
         * This email was built using Tabular.
         * For more information, visit https://tabular.email

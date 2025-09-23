@@ -37,16 +37,18 @@ import axios from "axios";
 import { MdOutlineChatBubbleOutline } from "react-icons/md";
 import Link from "next/link";
 import { useGetAuthUserQuery } from "@/state/api";
+import { createClient } from "@/lib/supabase/client";
 
 const page = () => {
+  const supabase = createClient();
   const { data: authUser } = useGetAuthUserQuery();
   const { toast } = useToast();
 
   const [orders, setOrders] = useState<any | null>();
   const [isLoading, setIsLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [selectedImage, setSelectedImage] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File>();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>();
   const [open, setOpen] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
 
@@ -67,16 +69,31 @@ const page = () => {
   const handleUpload = async (id: any) => {
     setUploading(true);
     const formData = new FormData();
-    formData.append("myImage", selectedFile!);
+    // formData.append("myImage", selectedFile!);
     formData.append("from", authUser?.user?.email!);
     formData.append("to", "admin");
     formData.append("type", "image");
     formData.append("id", id);
+    let fileDbPath
     try {
       if (!selectedFile) return;
       // const formData = new FormData();
       // formData.append("myImage", selectedFile!);
       // formData.append("id", id);
+      const fileExt = selectedFile.name.split('.').pop();
+      const filePath = `${id}/${Date.now()}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage
+      .from("image")
+      .upload(filePath, selectedFile, { upsert: true });
+
+      if (uploadError) {
+        console.error("Failed to upload new avatar.");
+        return;
+      }
+
+      fileDbPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/image/${filePath}`
+
+      formData.append("imageUrl", fileDbPath);
       const { data } = await axios.post(
         `/api/order/chat/image/${id}`,
         formData
