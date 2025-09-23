@@ -13,24 +13,36 @@ export async function POST(req: NextRequest) {
   const id = (formData.get("id") as string) || null;
   const image = (formData.get("myImage") as File) || null;
 
+  if (!image || !id) {
+    return NextResponse.json(
+      { error: "Missing required fields: id or image" },
+      { status: 400 }
+    );
+  }
+
   const buffer = Buffer.from(await image.arrayBuffer());
 
-  const relativeUploadDir = `/uploads/${new Date(Date.now())
+  // Create date-based folder structure
+  const dateFolder = new Date(Date.now())
     .toLocaleDateString("id-ID", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
     })
-    .replace(/\//g, "-")}`;
+    .replace(/\//g, "-");
 
-  // const uploadDir = join(process.cwd(), "public", relativeUploadDir);
-  const uploadDir = relativeUploadDir
+  // Use Railway's persistent volume at /uploads
+  const uploadDir = join("/uploads", dateFolder);
+  
+  // For serving files, we need the relative path from public
+  const relativeUploadDir = `/uploads/${dateFolder}`;
 
   try {
+    // Check if directory exists, create if it doesn't
     await stat(uploadDir);
   } catch (e: any) {
     if (e.code === "ENOENT") {
-      // This is for checking the directory is exist (ENOENT : Error No Entry)
+      // Create directory recursively
       await mkdir(uploadDir, { recursive: true });
     } else {
       console.error(
@@ -38,39 +50,49 @@ export async function POST(req: NextRequest) {
         e
       );
       return NextResponse.json(
-        { error: "Something went wrong." },
+        { error: "Something went wrong creating upload directory." },
         { status: 500 }
       );
     }
   }
 
-  console.log(formData);
+  console.log("FormData received:", Object.fromEntries(formData.entries()));
 
   try {
+    // Generate unique filename
     const uniqueSuffix = `${Date.now()}-${id}`;
-    // const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    // const filename = `${image.name.replace(
-    //   /\.[^/.]+$/,
-    //   ""
-    // )}-${uniqueSuffix}.${mime.getExtension(image.type)}`;
-    const filename = `${uniqueSuffix}.${mime.getExtension(image.type)}`;
-    await writeFile(`${uploadDir}/${filename}`, new Uint8Array(buffer));
+    const fileExtension = mime.getExtension(image.type);
+    
+    if (!fileExtension) {
+      return NextResponse.json(
+        { error: "Invalid file type" },
+        { status: 400 }
+      );
+    }
+
+    const filename = `${uniqueSuffix}.${fileExtension}`;
+    const filePath = join(uploadDir, filename);
+
+    // Write file to Railway's persistent storage
+    await writeFile(filePath, new Uint8Array(buffer));
+    
+    // Create URL path for serving the file
     const fileUrl = `${relativeUploadDir}/${filename}`;
 
-    const imageData = await readFile(`${uploadDir}/${filename}`, {
+    // Read file for email attachment (as base64)
+    const imageData = await readFile(filePath, {
       encoding: "base64",
     });
-    // console.log(imageData);
 
+    // Create data URL for email
+    const src = `data:${image.type};base64,${imageData}`;
     
-
-    const src = `data:image/png;base64, ${imageData}`;
+    // Send email notification
     await sendMail({
-      // to: "chynaharmony15@gmail.com",
       to: "victoryessien01@gmail.com",
       name: "essien",
       subject: `ORDER${id} New Chat Message`,
-      body:`<!--
+      body: `<!--
       * This email was built using Tabular.
       * For more information, visit https://tabular.email
       -->
@@ -234,14 +256,14 @@ export async function POST(req: NextRequest) {
       <!--[if !mso]>--><td class="t9" style="width:480px;">
       <!--<![endif]-->
       <!--[if mso]><td class="t9" style="width:480px;"><![endif]-->
-      <p class="t8" style="margin:0;Margin:0;font-family:Albert Sans,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;"><span class="t7" style="margin:0;Margin:0;font-weight:bold;mso-line-height-rule:exactly;">Ordernumber</span></p></td>
+      <p class="t8" style="margin:0;Margin:0;font-family:Albert Sans,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;"><span class="t7" style="margin:0;Margin:0;font-weight:bold;mso-line-height-rule:exactly;">Order ID: ${id}</span></p></td>
       </tr></table>
       </td></tr><tr><td>
       <table class="t13" role="presentation" cellpadding="0" cellspacing="0" align="center"><tr>
       <!--[if !mso]>--><td class="t12" style="width:480px;padding:0 0 22px 0;">
       <!--<![endif]-->
       <!--[if mso]><td class="t12" style="width:480px;padding:0 0 22px 0;"><![endif]-->
-      <p class="t11" style="margin:0;Margin:0;font-family:Albert Sans,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">KLS12342212</p></td>
+      <p class="t11" style="margin:0;Margin:0;font-family:Albert Sans,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif;line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">A new validation image has been uploaded for this order.</p></td>
       </tr></table>
       </td></tr><tr><td>
       <table class="t16" role="presentation" cellpadding="0" cellspacing="0" align="left"><tr>
@@ -254,19 +276,28 @@ export async function POST(req: NextRequest) {
       </tr></table>
       </td></tr><tr><td><div class="t20" style="mso-line-height-rule:exactly;mso-line-height-alt:45px;line-height:45px;font-size:1px;display:block;">&nbsp;</div></td></tr></table></td></tr></table></div></body>
       </html>`,
-     
     });
     
-    // update in database
+    // Update database with file path
     const updateStatus = await Orders.findByIdAndUpdate(id, {
       valdationImagePath: fileUrl,
     });
 
-    return NextResponse.json({ user: "ouu la la la" });
+    if (!updateStatus) {
+      console.warn(`Order with ID ${id} not found in database`);
+    }
+
+    return NextResponse.json({ 
+      success: true,
+      message: "File uploaded successfully", 
+      filePath: fileUrl,
+      orderId: id
+    });
+    
   } catch (e) {
     console.error("Error while trying to upload a file\n", e);
     return NextResponse.json(
-      { error: "Something went wrong." },
+      { error: "Something went wrong during file upload." },
       { status: 500 }
     );
   }
